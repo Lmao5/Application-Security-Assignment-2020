@@ -13,7 +13,17 @@ namespace Application_Security_Assignment_190246N
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Add session stuff here
+            //session counter
+        }
 
+        private bool ValidateInput()
+        {
+            return false;
+        }
+        public bool ValidateCaptcha()
+        {
+            return false;
         }
     }
 }

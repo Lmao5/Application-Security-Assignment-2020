@@ -63,12 +63,14 @@
             <asp:TextBox ID="secondPasswordTB" runat="server" placeholder="Re-enter Password" CssClass="form-control" type="password" onkeyup="javascript:Validate()"></asp:TextBox>
             <asp:Label ID="secondPasswordError" runat="server"></asp:Label>
             </div>
+           <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
           <asp:Button ID="submitBtn" runat="server" Text="Submit" CssClass="btn btn-primary btn-style" OnClick="submitBtn_Click"/>
         </form>
             </div>
             <div class="col-md-4"></div>
         </div>
      </div>
+    <!--- Password Validation --->
        <script type="text/javascript">
            function Validate() {
                var str = document.getElementById('<%=firstPasswordTB.ClientID %>').value;

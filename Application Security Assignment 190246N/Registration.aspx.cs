@@ -19,7 +19,7 @@ namespace Application_Security_Assignment_190246N
 
         protected void submitBtn_Click(object sender, EventArgs e)
         {
-            bool validInput = true;//= ValidateInput();
+            bool validInput = ValidateInput();
 
             if(validInput == true)
             {
@@ -140,6 +140,49 @@ namespace Application_Security_Assignment_190246N
                 lastNameError.Visible = false;
             }
 
+            //Checks if email address is empty
+            if (String.IsNullOrEmpty(emailTB.Text))
+            {
+                emailError.Text = "Please enter your email address";
+                emailError.ForeColor = Color.Red;
+                emailError.Visible = true;
+            }
+            else
+            {
+                //Checks if email addres is actually email address
+                bool isEmail = Regex.IsMatch(emailTB.Text, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
+                if(isEmail == true)
+                {
+                    emailError.Text = "";
+                    emailError.Visible = false;
+                }
+                else
+                {
+                    emailError.Text = "Please enter a valid email address";
+                    emailError.ForeColor = Color.Red;
+                    emailError.Visible = true;
+                }
+            }
+
+            //Checks if birth date is chosen or not
+            if (String.IsNullOrEmpty(dobTB.Text))
+            {
+                dobTBError.Text = "Please select birth date";
+                dobTBError.ForeColor = Color.Red;
+                dobTBError.Visible = true;
+            }
+            else if (!Regex.IsMatch(dobTB.Text, "^[a-zA-Z0-9 ]*$"))
+            {
+                dobTBError.Text = "Please choose a valid birth date";
+                dobTBError.ForeColor = Color.Red;
+                dobTBError.Visible = true;
+            }
+            else
+            {
+                dobTBError.Text = "";
+                dobTBError.Visible = false;
+            }
+
             //Checks if card name is empty
             if (String.IsNullOrEmpty(nameOnCardTB.Text))
             {
@@ -159,7 +202,6 @@ namespace Application_Security_Assignment_190246N
                 nameOnCardError.Visible = false;
             }
 
-            //result = int.TryParse(cardNumberTB.Text, out cardNumber);
             //checks if card number is actually numbers     
             //checks if there is other character other than numbers
             if (!Regex.IsMatch(cardNumberTB.Text, "^[0-9]*$"))
@@ -240,6 +282,19 @@ namespace Application_Security_Assignment_190246N
                 }
             }
 
+            //Checks if both passwords are the same
+            if(firstPasswordTB.Text != secondPasswordTB.Text)
+            {
+                secondPasswordError.Text = "Please ensure that both passwords are the same";
+                secondPasswordError.Visible = true;
+                secondPasswordError.ForeColor = Color.Red;
+            }
+            else
+            {
+                secondPasswordError.Text = "";
+                secondPasswordError.Visible = false;
+            }
+
             //checks if any error labels is empty or not
             if (String.IsNullOrEmpty(cardNumberError.Text)
                 && String.IsNullOrEmpty(nameOnCardError.Text)
@@ -252,6 +307,10 @@ namespace Application_Security_Assignment_190246N
             {
                 return false;
             }
+        }
+        public bool ValidateCaptcha()
+        {
+            return false;
         }
     }
 }
