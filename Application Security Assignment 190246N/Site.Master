@@ -1,0 +1,76 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Application_Security_Assignment_190246N.Site" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <!--- Bootstrap 5.0 Beta --->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <!--- Google Recaptcha 3.0 --->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LekWxYaAAAAADfH_r4vYom7sSsQ5kaFqgGlzrrC"></script>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container container-fluid">
+            <a class="navbar-brand" href="#">SITConnect</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="Home.aspx">Home</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="Registration.aspx">Registration</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="Login.aspx">Login</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown link
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      </ul>
+                  </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <form id="form1" runat="server">
+        <div class="container mt-5 mb-5" style="height:auto;">
+       <asp:ContentPlaceHolder ID="bodyContent" runat="server">
+       </asp:ContentPlaceHolder>
+       </div>
+        </form>
+
+        <footer class="footer mt-auto py-3 bg-light">
+      <div class="container">
+        <span class="text-muted">&copy; 2020 Muhammad Hasan Bin Suwandi</span>
+      </div>
+    </footer>
+
+    <!--- Bootstrap & Popper JS--->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
+    <script>
+     grecaptcha.ready(function () {
+         grecaptcha.execute('6LekWxYaAAAAADfH_r4vYom7sSsQ5kaFqgGlzrrC', { action: 'Login' }).then(function (token) {
+     document.getElementById("g-recaptcha-response").value = token;
+     });
+     });
+    </script>
+</body>
+</html>
