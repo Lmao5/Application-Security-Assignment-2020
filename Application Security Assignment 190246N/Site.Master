@@ -60,7 +60,7 @@
 
     <script>
      grecaptcha.ready(function () {
-         grecaptcha.execute('6LekWxYaAAAAADfH_r4vYom7sSsQ5kaFqgGlzrrC', { action: 'Login' }).then(function (token) {
+         grecaptcha.execute('6LekWxYaAAAAADfH_r4vYom7sSsQ5kaFqgGlzrrC', { action: 'Submit' }).then(function (token) {
      document.getElementById("g-recaptcha-response").value = token;
      });
      });

@@ -6,6 +6,9 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Text.RegularExpressions;
 using System.Drawing;
+using System.Net;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace Application_Security_Assignment_190246N
 {
@@ -14,20 +17,23 @@ namespace Application_Security_Assignment_190246N
         protected void Page_Load(object sender, EventArgs e)
         {
             //User needs to input all correct information before sending off
-            submitBtn.Enabled = false;
+            //submitBtn.Enabled = false;
         }
 
         protected void submitBtn_Click(object sender, EventArgs e)
         {
             bool validInput = ValidateInput();
 
-            if(validInput == true)
+            bool validCaptcha = ValidateCaptcha();
+
+            if (validInput == true && validCaptcha == true)
             {
                 submitBtn.Enabled = true;
+                //secondPasswordTB.Text = validCaptcha.ToString();
             }
             else
             {
-                submitBtn.Enabled = false;
+                //submitBtn.Enabled = false;
             }
 
 
@@ -171,12 +177,12 @@ namespace Application_Security_Assignment_190246N
                 dobTBError.ForeColor = Color.Red;
                 dobTBError.Visible = true;
             }
-            else if (!Regex.IsMatch(dobTB.Text, "^[a-zA-Z0-9 ]*$"))
+            /*else if (!Regex.IsMatch(dobTB.Text, "^[a-zA-Z0-9 ]*$"))
             {
                 dobTBError.Text = "Please choose a valid birth date";
                 dobTBError.ForeColor = Color.Red;
                 dobTBError.Visible = true;
-            }
+            }*/
             else
             {
                 dobTBError.Text = "";
@@ -308,9 +314,49 @@ namespace Application_Security_Assignment_190246N
                 return false;
             }
         }
+
+        //an object for recaptcha to store info
+        public class reCaptchaResponseObject
+        {
+            public string success { get; set; }
+            public List<string> ErrorMessage { get; set; }
+        }
+
+
         public bool ValidateCaptcha()
         {
-            return false;
+            bool result = true;
+
+            //Retrieves captcha response from captcha api
+            string captchaResponse = Request.Form["g-recaptcha-response"];
+
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://www.google.com/recaptcha/api/siteverify?secret=6LekWxYaAAAAAOJF1_WrjjmjffAFI2YN2ZWlmm1i &response="+captchaResponse);
+
+            try
+            {
+                using (WebResponse wResponse = req.GetResponse())
+                {
+                    using (StreamReader readStream = new StreamReader(wResponse.GetResponseStream()))
+                    {
+                        //Read entire json response from recaptcha
+                        string jsonResponse = readStream.ReadToEnd();
+
+                        JavaScriptSerializer js = new JavaScriptSerializer();
+
+                        reCaptchaResponseObject jsonObject = js.Deserialize<reCaptchaResponseObject>(jsonResponse);
+
+                        Console.WriteLine("--- Testing ---");
+                        Console.WriteLine(jsonObject);
+                        //Read success property in json object
+                        result = Convert.ToBoolean(jsonObject.success);
+                    }
+                }
+                return result;
+            }
+            catch(WebException ex)
+            {
+                throw ex;
+            }
         }
     }
 }
