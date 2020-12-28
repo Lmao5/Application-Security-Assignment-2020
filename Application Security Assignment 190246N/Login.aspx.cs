@@ -16,8 +16,92 @@ namespace Application_Security_Assignment_190246N
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //Add session stuff here
-            //session counter
+            DateTime currentDate = DateTime.Now;
+
+            //If first time visiting this login page
+            /*if(Session["loginFailureCount"] == null && Session["AuthTokenFailCount"] == null && Request.Cookies["AuthTokenFailCount"] == null)
+            {
+                //Set counter
+                Session["loginFailureCount"] = 0;
+                var loginFailCount = Session["loginFailureCount"];
+                //Below code for testing
+                emailError.Text = loginFailCount.ToString();
+            }
+            else
+            {
+                //Checks if cookie is the same as session
+                if (!Session["AuthTokenFailCount"].ToString().Equals(Request.Cookies["AuthTokenFailCount"].Value))
+                {
+                    Response.Redirect("Login.aspx", false);
+                }
+                else
+                {
+                    if ((int)Session["loginFailureCount"] > 3)
+                    {
+                        submitBtn.Enabled = false;
+                    }
+                    else
+                    {
+                        submitBtn.Enabled = true;
+                    }
+                }
+            }*/
+
+            //Checks if Session and cookies exist
+            if (Session["loginFailureCount"] != null && Session["AuthTokenFailCount"] != null && Request.Cookies["AuthTokenFailCount"] != null)
+            {
+                //Checks if session and cookies are the same
+                if (!Session["AuthTokenFailCount"].ToString().Equals(Request.Cookies["AuthTokenFailCount"].Value))
+                {
+                    Response.Redirect("Login.aspx", false);
+                }
+                else
+                {
+                    var loginFailCount = Session["loginFailureCount"];
+                    //Print out counter for testing purposes
+                    emailError.Text = loginFailCount.ToString();
+                    //if login failure more than 3 times
+                    if ((int)Session["loginFailureCount"] > 3)
+                    {
+                        //first time disable button
+                        if(Session["lastFailDate"] == null)
+                        {
+                            Session["lastFailDate"] = DateTime.Now;
+                            submitBtn.Enabled = false;
+                        }
+                        else
+                        {
+                            DateTime lastFailDate = Convert.ToDateTime(Session["lastFailDate"]);
+                            double minuteDifference = currentDate.Subtract(lastFailDate).TotalMinutes;
+                            if(minuteDifference > 1)
+                            {
+                                Session.Remove("lastFailDate");
+                                Session.Remove("loginFailureCount");
+
+                                emailError.Text = minuteDifference.ToString();
+                                submitBtn.Enabled = true;
+                            }
+                            else
+                            {
+                                emailError.Text = minuteDifference.ToString();
+                                submitBtn.Enabled = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //enable button
+                        submitBtn.Enabled = true;
+                    }
+                }
+            }
+            //First time visiting the website
+            else
+            {
+                Session["loginFailureCount"] = 0;
+                var loginFailCount = Session["loginFailureCount"];
+                emailError.Text = loginFailCount.ToString();
+            }
         }
 
         private bool ValidateInput()
@@ -124,7 +208,12 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
-
+                string guid = Guid.NewGuid().ToString();
+                Session["AuthTokenFailCount"] = guid;
+                int currentLoginFailCount = (int)Session["loginFailureCount"];
+                Session["loginFailureCount"] = currentLoginFailCount + 1;
+                Response.Cookies.Add(new HttpCookie("AuthTokenFailCount", guid));
+                Response.Redirect("Login.aspx", false);
             }
         }
     }
