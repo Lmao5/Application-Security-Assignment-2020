@@ -75,8 +75,13 @@ namespace Application_Security_Assignment_190246N
                             double minuteDifference = currentDate.Subtract(lastFailDate).TotalMinutes;
                             if(minuteDifference > 1)
                             {
+                                //Remove counter and last failure session
                                 Session.Remove("lastFailDate");
                                 Session.Remove("loginFailureCount");
+
+                                //Empties auth token
+                                Response.Cookies["AuthTokenFailCount"].Value = string.Empty;
+                                Response.Cookies["AuthTokenFailCount"].Expires = DateTime.Now.AddMonths(-20);
 
                                 emailError.Text = minuteDifference.ToString();
                                 submitBtn.Enabled = true;
