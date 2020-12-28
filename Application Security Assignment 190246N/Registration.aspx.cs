@@ -123,8 +123,9 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
-                firstNameError.Text = "";
-                firstNameError.Visible = false;
+                firstNameError.Text = "Excellent";
+                firstNameError.ForeColor = Color.Green;
+                firstNameError.Visible = true;
             }
 
             //Checks if last name is empty
@@ -142,8 +143,9 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
-                lastNameError.Text = "";
-                lastNameError.Visible = false;
+                lastNameError.Text = "Excellent";
+                lastNameError.ForeColor = Color.Green;
+                lastNameError.Visible = true;
             }
 
             //Checks if email address is empty
@@ -159,7 +161,8 @@ namespace Application_Security_Assignment_190246N
                 bool isEmail = Regex.IsMatch(emailTB.Text, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
                 if(isEmail == true)
                 {
-                    emailError.Text = "";
+                    emailError.Text = "Excellent";
+                    emailError.ForeColor = Color.Green;
                     emailError.Visible = false;
                 }
                 else
@@ -185,8 +188,9 @@ namespace Application_Security_Assignment_190246N
             }*/
             else
             {
-                dobTBError.Text = "";
-                dobTBError.Visible = false;
+                dobTBError.Text = "Excellent";
+                dobTBError.ForeColor = Color.Green;
+                dobTBError.Visible = true;
             }
 
             //Checks if card name is empty
@@ -204,8 +208,9 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
-                nameOnCardError.Text = "";
-                nameOnCardError.Visible = false;
+                nameOnCardError.Text = "Excellent";
+                nameOnCardError.ForeColor = Color.Green;
+                nameOnCardError.Visible = true;
             }
 
             //checks if card number is actually numbers     
@@ -232,8 +237,9 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
-                cardNumberError.Text = "";
-                cardNumberError.Visible = false;
+                cardNumberError.Text = "Excellent";
+                cardNumberError.ForeColor = Color.Green;
+                cardNumberError.Visible = true;
             }
 
             //Checks Card CVV Number
@@ -258,8 +264,9 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
-                CVVError.Text = "";
-                CVVError.Visible = false;
+                CVVError.Text = "Excellent";
+                CVVError.ForeColor = Color.Green;
+                CVVError.Visible = true;
             }
 
             //Checks if card expiry date is chosen or not
@@ -283,8 +290,9 @@ namespace Application_Security_Assignment_190246N
                 {
                     //cardExpiryError.Text = monthDifference.ToString();
                     //cardExpiryError.ForeColor = Color.Black;
-                    cardExpiryError.Text = "";
-                    cardExpiryError.Visible = false;
+                    cardExpiryError.Text = "Excellent";
+                    cardExpiryError.ForeColor = Color.Green;
+                    cardExpiryError.Visible = true;
                 }
             }
 
@@ -295,17 +303,36 @@ namespace Application_Security_Assignment_190246N
                 secondPasswordError.Visible = true;
                 secondPasswordError.ForeColor = Color.Red;
             }
+            else if (String.IsNullOrEmpty(secondPasswordTB.Text))
+            {
+                secondPasswordError.Text = "Please enter your password again";
+                secondPasswordError.Visible = true;
+                secondPasswordError.ForeColor = Color.Red;
+            }
             else
             {
-                secondPasswordError.Text = "";
-                secondPasswordError.Visible = false;
+                firstPasswordError.Text = "Excellent";
+                firstPasswordError.ForeColor = Color.Green;
+                firstPasswordError.Visible = true;
+                secondPasswordError.Text = "Excellent";
+                secondPasswordError.ForeColor = Color.Green;
+                secondPasswordError.Visible = true;
             }
 
-            //checks if any error labels is empty or not
-            if (String.IsNullOrEmpty(cardNumberError.Text)
-                && String.IsNullOrEmpty(nameOnCardError.Text)
-                && String.IsNullOrEmpty(cardExpiryError.Text)
-                && String.IsNullOrEmpty(CVVError.Text))
+            var redColor = Color.Red;
+            var greenColor = Color.Green;
+
+            //checks if any error labels is green or not
+            if (firstNameError.ForeColor == greenColor
+                && lastNameError.ForeColor == greenColor
+                && emailError.ForeColor == greenColor
+                && dobTBError.ForeColor == greenColor
+                && cardNumberError.ForeColor == greenColor
+                && nameOnCardError.ForeColor == greenColor
+                && cardExpiryError.ForeColor == greenColor
+                && CVVError.ForeColor == greenColor
+                && firstPasswordError.ForeColor == greenColor
+                && secondPasswordError.ForeColor == greenColor)
             {
                 return true;
             }

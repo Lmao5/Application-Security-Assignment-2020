@@ -22,7 +22,51 @@ namespace Application_Security_Assignment_190246N
 
         private bool ValidateInput()
         {
-            return false;
+            //Checks if email address is empty
+            if (String.IsNullOrEmpty(emailTB.Text))
+            {
+                emailError.Text = "Please enter your email address";
+                emailError.ForeColor = Color.Red;
+                emailError.Visible = true;
+            }
+            else
+            {
+                //Checks if email addres is actually email address
+                bool isEmail = Regex.IsMatch(emailTB.Text, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
+                if (isEmail == true)
+                {
+                    emailError.Text = "";
+                    emailError.ForeColor = Color.Green;
+                    emailError.Visible = false;
+                }
+                else
+                {
+                    emailError.Text = "Please enter a valid email address";
+                    emailError.ForeColor = Color.Red;
+                    emailError.Visible = true;
+                }
+            }
+            //Checks if both passwords are the same
+            if (String.IsNullOrEmpty(passwordTB.Text))
+            {
+                passwordError.Text = "Please enter your password";
+                passwordError.Visible = true;
+                passwordError.ForeColor = Color.Red;
+            }
+            else
+            {
+                passwordError.Text = "";
+                passwordError.Visible = false;
+                passwordError.ForeColor = Color.Green;
+            }
+            if(emailError.ForeColor == Color.Green && passwordError.ForeColor == Color.Green)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         //an object for recaptcha to store info
         public class reCaptchaResponseObject
@@ -65,6 +109,22 @@ namespace Application_Security_Assignment_190246N
             catch (WebException ex)
             {
                 throw ex;
+            }
+        }
+
+        protected void submitBtn_Click(object sender, EventArgs e)
+        {
+            bool validInput = ValidateInput();
+
+            bool validCaptcha = ValidateCaptcha();
+
+            if (validCaptcha == true && validInput == true)
+            {
+
+            }
+            else
+            {
+
             }
         }
     }
