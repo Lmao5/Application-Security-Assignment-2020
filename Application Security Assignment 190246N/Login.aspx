@@ -39,6 +39,7 @@
             else {
                 document.getElementById('<%=emailError.ClientID%>').innerHTML = "Excellent";
                 document.getElementById('<%=emailError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
                 return "Email exists";
             }
         }
@@ -51,11 +52,13 @@
             if (password.length < 8) {
                 document.getElementById('<%=passwordError.ClientID%>').innerHTML = "Please enter a valid password";
                 document.getElementById('<%=passwordError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
                 return "Password is invalid"
             }
             else {
                 document.getElementById('<%=passwordError.ClientID%>').innerHTML = "Excellent";
                 document.getElementById('<%=passwordError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
                 return "Password is valid"
             }
         }

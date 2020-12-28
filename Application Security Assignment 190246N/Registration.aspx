@@ -12,12 +12,12 @@
                <div class="mb-3 row">
                    <div class="col-md-6">
                         <label for="firstNameLbl" class="form-label">First Name</label>
-                        <asp:TextBox ID="firstNameTB" runat="server" placeholder="First Name" CssClass="form-control" ></asp:TextBox>
+                        <asp:TextBox ID="firstNameTB" runat="server" placeholder="First Name" CssClass="form-control" onkeyup ="validateFirstName()"></asp:TextBox>
                         <asp:Label ID="firstNameError" runat="server"></asp:Label>
                    </div>
                    <div class="col-md-6">
                        <label for="lastNameLbl" class="form-label">Last Name</label>
-                       <asp:TextBox ID="lastNameTB" runat="server" placeholder="First Name" CssClass="form-control" ></asp:TextBox>
+                       <asp:TextBox ID="lastNameTB" runat="server" placeholder="First Name" CssClass="form-control" onkeyup="validateLastName()"></asp:TextBox>
                        <asp:Label ID="lastNameError" runat="server"></asp:Label>
                    </div>
                </div>
@@ -55,12 +55,12 @@
                </div>
           <div class="mb-3">
             <label for="firstPassword" class="form-label">Password</label>
-            <asp:TextBox ID="firstPasswordTB" runat="server" placeholder="Password" CssClass="form-control" type="password" onkeyup="javascript:Validate()"></asp:TextBox>
+            <asp:TextBox ID="firstPasswordTB" runat="server" placeholder="Password" CssClass="form-control" type="password" onkeyup="javascript:ValidatePassword()"></asp:TextBox>
             <asp:Label ID="firstPasswordError" runat="server"></asp:Label>
           </div>
             <div class="mb-3">
             <label for="secondPassword" class="form-label">Re-enter Password</label>
-            <asp:TextBox ID="secondPasswordTB" runat="server" placeholder="Re-enter Password" CssClass="form-control" type="password" onkeyup="javascript:Validate()"></asp:TextBox>
+            <asp:TextBox ID="secondPasswordTB" runat="server" placeholder="Re-enter Password" CssClass="form-control" type="password" onkeyup="javascript:ValidatePassword()"></asp:TextBox>
             <asp:Label ID="secondPasswordError" runat="server"></asp:Label>
             </div>
            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
@@ -70,11 +70,60 @@
             <div class="col-md-4"></div>
         </div>
      </div>
+        <!--- firstName Validation --->
+    <script type="text/javascript">
+        function validateFirstName() {
+            var firstName = document.getElementById('<%=firstNameTB.ClientID%>').value;
+            console.log(firstName);
+
+            if (firstName.length < 0) {
+                document.getElementById('<%=firstNameError.ClientID%>').innerHTML = "Please enter a valid first name";
+                document.getElementById('<%=firstNameError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            //ensures that no special characters are in the firstnameTB
+            else if (firstName.search(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
+                document.getElementById('<%=firstNameError.ClientID%>').innerHTML = "Please enter a valid first name";
+                document.getElementById('<%=firstNameError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else {
+                document.getElementById('<%=firstNameError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=firstNameError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+        }
+    </script>
+            <!--- lastName Validation --->
+    <script type="text/javascript">
+        function validateLastName()
+        {
+            var lastName = document.getElementById('<%=lastNameTB.ClientID%>').value;
+            if (lastName.length < 0) {
+                document.getElementById('<%=lastNameError.ClientID%>').innerHTML = "Please enter a valid last name";
+                document.getElementById('<%=lastNameError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (lastName.search(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
+                document.getElementById('<%=lastNameError.ClientID%>').innerHTML = "Please enter a valid first name";
+                document.getElementById('<%=lastNameError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else {
+                document.getElementById('<%=lastNameError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=lastNameError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+        }
+    </script>
+    <script type="text/javascript">
+
+    </script>
     <!--- Password Validation --->
        <script type="text/javascript">
-           function Validate() {
+           function ValidatePassword() {
                var str = document.getElementById('<%=firstPasswordTB.ClientID %>').value;
-            var str2 = document.getElementById('<%=secondPasswordTB.ClientID%>').value;
+               var str2 = document.getElementById('<%=secondPasswordTB.ClientID%>').value;
 
                if (str.length < 0) {
                    document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password length must be at least 8 characters";
