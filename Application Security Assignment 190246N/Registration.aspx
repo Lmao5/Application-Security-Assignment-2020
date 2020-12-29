@@ -23,33 +23,33 @@
                </div>
           <div class="mb-3">
             <label for="emailLabel" class="form-label">Email address</label>
-            <asp:TextBox ID="emailTB" runat="server" placeholder="Email Address" type="email" CssClass="form-control" ></asp:TextBox>
+            <asp:TextBox ID="emailTB" runat="server" placeholder="Email Address" type="email" CssClass="form-control" onkeyup="ValidateEmail()" required></asp:TextBox>
             <asp:Label ID="emailError" runat="server"></asp:Label>
           </div>
             <div class="mb-3">
             <label for="dobLbl" class="form-label">Date of Birth (DD MM YYYY)</label>
-            <asp:TextBox ID="dobTB" runat="server" placeholder="Date of Birth" type="date" CssClass="form-control" ></asp:TextBox>
+            <asp:TextBox ID="dobTB" runat="server" placeholder="Date of Birth" type="date" CssClass="form-control" onkeyup="dobValidation()"></asp:TextBox>
             <asp:Label ID="dobTBError" runat="server"></asp:Label>
           </div>
             <div class="mb-3">
             <label for="nameOnCard" class="form-label">Name On Card</label>
-            <asp:TextBox ID="nameOnCardTB" runat="server" placeholder="Name On Card" CssClass="form-control"></asp:TextBox>
+            <asp:TextBox ID="nameOnCardTB" runat="server" placeholder="Name On Card" CssClass="form-control" onkeyup="nameOnCardValidation()"></asp:TextBox>
             <asp:Label ID="nameOnCardError" runat="server"></asp:Label>
           </div>
            <div class="mb-3">
             <label for="creditCardNumber" class="form-label">Credit Card Number</label>
-            <asp:TextBox ID="cardNumberTB" runat="server" placeholder="Card Number" CssClass="form-control"></asp:TextBox>
+            <asp:TextBox ID="cardNumberTB" runat="server" placeholder="Card Number" CssClass="form-control" onkeyup="cardNumberValidation()"></asp:TextBox>
             <asp:Label ID="cardNumberError" runat="server"></asp:Label>
           </div>
                <div class="row mb-3">
                    <div class="col-md-6">
                         <label for="cardExpiryLbl" class="form-label">Credit Card Expiry (MM YYYY)</label>
-                        <asp:TextBox ID="cardExpiryTB" runat="server" type="month" placeholder="Card Expiry (MM YY)" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="cardExpiryTB" runat="server" type="month" placeholder="Card Expiry (MM YY)" CssClass="form-control" onkeyup="cardExpiryValidation()"></asp:TextBox>
                         <asp:Label ID="cardExpiryError" runat="server"></asp:Label>
                    </div>
                    <div class="col-md-6">
                        <label for="cvvLbl" class="form-label">CVV Number</label>
-                        <asp:TextBox ID="CVVTB" runat="server" placeholder="CVV Number" CssClass="form-control" ></asp:TextBox>
+                        <asp:TextBox ID="CVVTB" runat="server" placeholder="CVV Number" CssClass="form-control" onkeyup="cvvNumberValidation()"></asp:TextBox>
                         <asp:Label ID="CVVError" runat="server"></asp:Label>
                    </div>
                </div>
@@ -74,15 +74,15 @@
     <script type="text/javascript">
         function validateFirstName() {
             var firstName = document.getElementById('<%=firstNameTB.ClientID%>').value;
-            console.log(firstName);
+            //console.log(firstName);
 
-            if (firstName.length < 0) {
+            if (firstName.length <= 0) {
                 document.getElementById('<%=firstNameError.ClientID%>').innerHTML = "Please enter a valid first name";
                 document.getElementById('<%=firstNameError.ClientID%>').style.color = "Red";
                 document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
             }
             //ensures that no special characters are in the firstnameTB
-            else if (firstName.search(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
+            else if (firstName.search(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
                 document.getElementById('<%=firstNameError.ClientID%>').innerHTML = "Please enter a valid first name";
                 document.getElementById('<%=firstNameError.ClientID%>').style.color = "Red";
                 document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
@@ -99,12 +99,12 @@
         function validateLastName()
         {
             var lastName = document.getElementById('<%=lastNameTB.ClientID%>').value;
-            if (lastName.length < 0) {
+            if (lastName.length <= 0) {
                 document.getElementById('<%=lastNameError.ClientID%>').innerHTML = "Please enter a valid last name";
                 document.getElementById('<%=lastNameError.ClientID%>').style.color = "Red";
                 document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
             }
-            else if (lastName.search(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
+            else if (lastName.search(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
                 document.getElementById('<%=lastNameError.ClientID%>').innerHTML = "Please enter a valid first name";
                 document.getElementById('<%=lastNameError.ClientID%>').style.color = "Red";
                 document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
@@ -116,8 +116,173 @@
             }
         }
     </script>
+    <!--- Email Validation --->
     <script type="text/javascript">
+        function ValidateEmail() {
+            var email = document.getElementById('<%=emailTB.ClientID%>').value;
+            //console.log("testing");
+            //console.log(email.search(/[@]/));
+            if (email.length <= 0) {
+                document.getElementById('<%=emailError.ClientID%>').innerHTML = "Please enter your email address";
+                document.getElementById('<%=emailError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (email.search(/[@]/) == -1) {
+                document.getElementById('<%=emailError.ClientID%>').innerHTML = "Please enter a valid email address";
+                document.getElementById('<%=emailError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else {
+                document.getElementById('<%=emailError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=emailError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+        }
+    </script>
+    <!--- Date of Birth Validation --->
+    <script type="text/javascript">
+        function dobValidation() {
+            var dob = document.getElementById('<%=dobTB.ClientID%>').value;
 
+            if (dob.length <= 0) {
+                document.getElementById('<%=dobTBError.ClientID%>').innerHTML = "Please choose your date of birth";
+                document.getElementById('<%=dobTBError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else {
+                document.getElementById('<%=dobTBError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=dobTBError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+        }
+    </script>
+    <!--- nameOnCard Validation --->
+    <script type="text/javascript">
+        function nameOnCardValidation() {
+            var nameOnCard = document.getElementById('<%=nameOnCardTB.ClientID%>').value;
+            console.log(nameOnCard.search(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/));
+            if (nameOnCard.length <= 0) {
+                document.getElementById('<%=nameOnCardError.ClientID%>').innerHTML = "Please enter your name on card";
+                document.getElementById('<%=nameOnCardError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            //ensures that no special characters are in the cardnameTB
+            else if (nameOnCard.search(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
+                document.getElementById('<%=nameOnCardError.ClientID%>').innerHTML = "Please enter a valid name on card";
+                document.getElementById('<%=nameOnCardError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else {
+                document.getElementById('<%=nameOnCardError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=nameOnCardError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+        }
+    </script>
+    <!--- cardNumber Validation --->
+    <script type="text/javascript">
+        function cardNumberValidation() {
+            var cardNumber = document.getElementById('<%=cardNumberTB.ClientID%>').value;
+
+            if (cardNumber.length <= 0) {
+                document.getElementById('<%=cardNumberError.ClientID%>').innerHTML = "Please enter your card number";
+                document.getElementById('<%=cardNumberError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cardNumber.length != 16) {
+                document.getElementById('<%=cardNumberError.ClientID%>').innerHTML = "Please enter your 16-digit card number";
+                document.getElementById('<%=cardNumberError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cardNumber.search(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
+                document.getElementById('<%=cardNumberError.ClientID%>').innerHTML = "Please enter a valid 16-digit card number";
+                document.getElementById('<%=cardNumberError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cardNumber.search(/[A-Z]/) != -1) {
+                document.getElementById('<%=cardNumberError.ClientID%>').innerHTML = "Please enter a valid 16-digit card number";
+                document.getElementById('<%=cardNumberError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cardNumber.search(/[a-z]/) != -1) {
+                document.getElementById('<%=cardNumberError.ClientID%>').innerHTML = "Please enter a valid 16-digit card number";
+                document.getElementById('<%=cardNumberError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else{
+                document.getElementById('<%=cardNumberError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=cardNumberError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+        }
+    </script>
+    <!--- cardExpiry Validation --->
+    <script type="text/javascript">
+        function cardExpiryValidation() {
+            var cardExpiry = document.getElementById('<%=cardExpiryTB.ClientID%>').value;
+            var currentDate = new Date();
+            var monthDifference = currentDate.getMonth() - cardExpiry.getMonth();
+
+
+            if (cardExpiry.length <= 0) {
+                document.getElementById('<%=cardExpiryError.ClientID%>').innerHTML = "Please choose your card expiry date";
+                document.getElementById('<%=cardExpiryError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (currentDate.getMonth() > cardExpiry.getMonth()) {
+                document.getElementById('<%=cardExpiryError.ClientID%>').innerHTML = "Please ensure that your card is not expired";
+                document.getElementById('<%=cardExpiryError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (monthDifference < 3) {
+                document.getElementById('<%=cardExpiryError.ClientID%>').innerHTML = "Please ensure that your card expiries 3 months from now";
+                document.getElementById('<%=cardExpiryError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else {
+                document.getElementById('<%=cardExpiryError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=cardExpiryError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+
+        }
+    </script>
+    <!--- cvvNumber Validation --->
+    <script type="text/javascript">
+        function cvvNumberValidation() {
+            var cvvNumber = document.getElementById('<%=CVVTB.ClientID%>').value;
+
+            if (cvvNumber.length <= 0) {
+                document.getElementById('<%=CVVError.ClientID%>').innerHTML = "Please enter your CVV number";
+                document.getElementById('<%=CVVError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cvvNumber.length != 4) {
+                document.getElementById('<%=CVVError.ClientID%>').innerHTML = "Please enter your 4-digit CVV number";
+                document.getElementById('<%=CVVError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cvvNumber.search(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) != -1) {
+                document.getElementById('<%=CVVError.ClientID%>').innerHTML = "Please enter a valid 4-digit CVV number";
+                document.getElementById('<%=CVVError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cvvNumber.search(/[A-Z]/) != -1) {
+                document.getElementById('<%=CVVError.ClientID%>').innerHTML = "Please enter a valid 4-digit CVV number";
+                document.getElementById('<%=CVVError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else if (cvvNumber.search(/[a-z]/) != -1) {
+                document.getElementById('<%=CVVError.ClientID%>').innerHTML = "Please enter a valid 4-digit CVV number";
+                document.getElementById('<%=CVVError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+            }
+            else{
+                document.getElementById('<%=CVVError.ClientID%>').innerHTML = "Excellent";
+                document.getElementById('<%=CVVError.ClientID%>').style.color = "Green";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = false;
+            }
+        }
     </script>
     <!--- Password Validation --->
        <script type="text/javascript">
@@ -125,7 +290,7 @@
                var str = document.getElementById('<%=firstPasswordTB.ClientID %>').value;
                var str2 = document.getElementById('<%=secondPasswordTB.ClientID%>').value;
 
-               if (str.length < 0) {
+               if (str.length <= 0) {
                    document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password length must be at least 8 characters";
                    document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
                    document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
