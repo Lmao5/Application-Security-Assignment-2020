@@ -68,6 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.aspx" />
+    <Content Include="App_Data\AppSecAssignment.mdf" />
+    <Content Include="App_Data\AppSecAssignment_log.ldf">
+      <DependentUpon>AppSecAssignment.mdf</DependentUpon>
+    </Content>
     <Content Include="Home.aspx" />
     <Content Include="js\main.js" />
     <Content Include="Login.aspx" />
