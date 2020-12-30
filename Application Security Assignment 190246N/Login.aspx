@@ -8,6 +8,7 @@
     <div class="row mt-5 mb-5">
         <div class="col-md-4">
             <form id="loginForm">
+                <p><asp:Label ID="errorMsg" runat="server"></asp:Label></p>
                 <div class="mb-3">
                 <label for="emailLabel" class="form-label">Email address</label>
                 <asp:TextBox ID="emailTB" runat="server" placeholder="Email Address" type="email" CssClass="form-control" onkeyup="javascript:validateEmail()"></asp:TextBox>

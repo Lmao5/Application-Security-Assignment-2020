@@ -12,6 +12,7 @@ using System.Web.Script.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Configuration;
+using System.Data.SqlClient;
 
 namespace Application_Security_Assignment_190246N
 {
@@ -27,7 +28,8 @@ namespace Application_Security_Assignment_190246N
         protected void Page_Load(object sender, EventArgs e)
         {
             DateTime currentDate = DateTime.Now;
-
+            errorMsg.Text = "Testing";
+            errorMsg.ForeColor = Color.Red;
             //If first time visiting this login page
             /*if(Session["loginFailureCount"] == null && Session["AuthTokenFailCount"] == null && Request.Cookies["AuthTokenFailCount"] == null)
             {
@@ -217,9 +219,25 @@ namespace Application_Security_Assignment_190246N
 
             bool validCaptcha = ValidateCaptcha();
 
+            //Check if all input is valid or not
             if (validCaptcha == true && validInput == true)
             {
+                bool validEntry = ValidateEntry();
 
+                //Then we call the database
+                if (validEntry == true)
+                {
+                    Response.Redirect("User.aspx", false);
+                }
+                else
+                {
+                    string guid = Guid.NewGuid().ToString();
+                    Session["AuthTokenFailCount"] = guid;
+                    int currentLoginFailCount = (int)Session["loginFailureCount"];
+                    Session["loginFailureCount"] = currentLoginFailCount + 1;
+                    Response.Cookies.Add(new HttpCookie("AuthTokenFailCount", guid));
+                    Response.Redirect("Login.aspx", false);
+                }
             }
             else
             {
@@ -253,6 +271,122 @@ namespace Application_Security_Assignment_190246N
             }
             finally { }
             return cipherText;
+        }
+
+        //Retrieves passwordHash from specific email
+        protected string getDBHash(string email)
+        {
+            string dbHash = null;
+            SqlConnection con = new SqlConnection(DatabaseConnectionString);
+
+            //Find hash based on email
+            string sqlString = "SELECT passwordHash FROM userInfo WHERE email=@Email";
+            SqlCommand com = new SqlCommand(sqlString, con);
+            com.Parameters.AddWithValue("@Email", email);
+
+            try
+            {
+                con.Open();
+                using (SqlDataReader reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["passwordHash"] != null)
+                        {
+                            if (reader["passwordHash"] != DBNull.Value)
+                            {
+                                dbHash = reader["passwordHash"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                //Error Code here
+                Console.WriteLine(ex);
+                throw new Exception(ex.ToString());
+            }
+            finally { con.Close(); }
+
+            return dbHash;
+        }
+        //Retrieves passwordSalt from specific email
+        protected string getDBSalt(string email)
+        {
+            string dbSalt = null;
+            SqlConnection con = new SqlConnection(DatabaseConnectionString);
+
+            //Find salt based on email
+            string sqlString = "SELECT passwordSalt FROM userInfo WHERE email=@Email";
+            SqlCommand com = new SqlCommand(sqlString, con);
+            com.Parameters.AddWithValue("@Email", email);
+
+            try
+            {
+                con.Open();
+                using (SqlDataReader reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if(reader["passwordSalt"] != null)
+                        {
+                            if(reader["passwordSalt"] != DBNull.Value)
+                            {
+                                dbSalt = reader["passwordSalt"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                //Error Code here
+                Console.WriteLine(ex);
+                throw new Exception(ex.ToString());
+            }
+            finally { con.Close(); }
+
+            return dbSalt;
+        }
+
+        //This functions checks if email exists in the database or not
+        protected bool ValidateEntry()
+        {
+            string email = emailTB.Text.Trim();
+            string password = passwordTB.Text.Trim();
+            SHA512Managed hashing = new SHA512Managed();
+            string resultHash = getDBHash(email);
+            string resultSalt = getDBSalt(email);
+            try
+            {
+                if(resultHash != null && resultHash.Length > 0 && resultSalt != null && resultSalt.Length > 0)
+                {
+                    string passwordWithSalt = password + resultSalt;
+                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(passwordWithSalt));
+                    string userHash = Convert.ToBase64String(hashWithSalt);
+
+                    //If calculated salt matches hash
+                    if (userHash.Equals(resultHash))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                //throw new Exception(ex.ToString());
+                errorMsg.Text = ex.ToString();
+                return false;
+            }
         }
     }
 }
