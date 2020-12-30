@@ -9,36 +9,33 @@ using System.Drawing;
 using System.Net;
 using System.IO;
 using System.Web.Script.Serialization;
+using System.Security.Cryptography;
+using System.Text;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Application_Security_Assignment_190246N
 {
     public partial class Registration : System.Web.UI.Page
     {
+        //store database directory string
+        string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
+        static string finalHash;
+        static string salt;
+        byte[] Key;
+        byte[] IV;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //User needs to input all correct information before sending off
-            //submitBtn.Enabled = false;
         }
 
         protected void submitBtn_Click(object sender, EventArgs e)
         {
-            bool validInput = ValidateInput();
-
-            bool validCaptcha = ValidateCaptcha();
-
-            if (validInput == true && validCaptcha == true)
-            {
-                submitBtn.Enabled = true;
-                //secondPasswordTB.Text = validCaptcha.ToString();
-            }
-            else
-            {
-                //submitBtn.Enabled = false;
-            }
-
 
             int scores = checkPassword(firstPasswordTB.Text);
-            switch (scores) 
+            switch (scores)
             {
                 case 1:
                     firstPasswordError.Text = "Very Weak";
@@ -63,6 +60,53 @@ namespace Application_Security_Assignment_190246N
                 default:
                     break;
             }
+
+            bool validInput = ValidateInput();
+
+            bool validCaptcha = ValidateCaptcha();
+
+            if (validInput == true && validCaptcha == true && scores != 5)
+            {
+                //submitBtn.Enabled = true;
+                //secondPasswordTB.Text = validCaptcha.ToString();
+                //Retrieve password input
+                string password = firstPasswordTB.Text.ToString().Trim();
+
+                //Generate random salt
+                RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                byte[] saltByte = new byte[8];
+
+                //Fills array of bytes with a cryptographically strong sequence of random values.
+                rng.GetBytes(saltByte);
+                salt = Convert.ToBase64String(saltByte);
+
+                SHA512Managed hashing = new SHA512Managed();
+                string pwdWithSalt = password + salt;
+
+                byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(password));
+                byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+
+                finalHash = Convert.ToBase64String(hashWithSalt);
+
+                RijndaelManaged cipher = new RijndaelManaged();
+                cipher.GenerateKey();
+                Key = cipher.Key;
+                IV = cipher.IV;
+
+                CreateAccount();
+
+
+                //Redirect to Login page
+                Response.Redirect("Login.aspx",false);
+            }
+            else
+            {
+                //submitBtn.Enabled = false;
+                Response.Redirect("Registration.aspx", false);
+            }
+
+
+            
         }
 
         private int checkPassword(string password)
@@ -383,6 +427,78 @@ namespace Application_Security_Assignment_190246N
             catch(WebException ex)
             {
                 throw ex;
+            }
+        }
+
+        //Encrypt text
+        protected byte[] encryptData(string data)
+        {
+            byte[] cipherText = null;
+            try
+            {
+                RijndaelManaged cipher = new RijndaelManaged();
+                cipher.IV = IV;
+                cipher.Key = Key;
+                ICryptoTransform encryptTransform = cipher.CreateEncryptor();
+                //ICryptoTransform decryptTransform = cipher.CreateDecryptor();
+                byte[] plainText = Encoding.UTF8.GetBytes(data);
+                cipherText = encryptTransform.TransformFinalBlock(plainText, 0,
+               plainText.Length);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally { }
+            return cipherText;
+        }
+
+        private void CreateAccount()
+        {
+            try
+            {
+                //Establishing database connection
+                using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("INSERT INTO userInfo VALUES(@email, @firstName, @lastName, @dob, @nameOnCard, @numberCard, @cvvNumber, @cardExpiry, @passwordHash, @passwordSalt, @lastUpdate, @IV, @Key)"))
+                    {
+                        using (SqlDataAdapter sda = new SqlDataAdapter())
+                        {
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Parameters.AddWithValue("@email", emailTB.Text.Trim());
+                            cmd.Parameters.AddWithValue("@firstName", firstNameTB.Text.Trim());
+                            cmd.Parameters.AddWithValue("@lastName", lastNameTB.Text.Trim());
+                            cmd.Parameters.AddWithValue("@dob", Convert.ToDateTime(dobTB.Text));
+
+                            //Card Info
+                            cmd.Parameters.AddWithValue("@nameOnCard", Convert.ToBase64String(encryptData(nameOnCardTB.Text.Trim())));
+                            cmd.Parameters.AddWithValue("@numberCard", Convert.ToBase64String(encryptData(cardNumberTB.Text.Trim())));
+                            cmd.Parameters.AddWithValue("@cvvNumber", Convert.ToBase64String(encryptData(CVVTB.Text.Trim())));
+                            cmd.Parameters.AddWithValue("@cardExpiry", Convert.ToBase64String(encryptData(cardExpiryTB.Text.Trim())));
+                            
+                            //Password salt & hash
+                            cmd.Parameters.AddWithValue("@passwordHash", finalHash);
+                            cmd.Parameters.AddWithValue("@passwordSalt", salt);
+
+                            //Last Updated
+                            cmd.Parameters.AddWithValue("@lastUpdate", DateTime.Now);
+
+                            //Key and IV
+                            cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
+                            cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
+                            cmd.Connection = con;
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                //Error Code here
+                Console.WriteLine(ex);
+                throw new Exception(ex.ToString());
             }
         }
     }

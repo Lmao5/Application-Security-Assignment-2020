@@ -9,11 +9,21 @@ using System.Drawing;
 using System.Net;
 using System.IO;
 using System.Web.Script.Serialization;
+using System.Security.Cryptography;
+using System.Text;
+using System.Configuration;
 
 namespace Application_Security_Assignment_190246N
 {
     public partial class Login : System.Web.UI.Page
     {
+        //store database directory string
+        string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
+        static string finalHash;
+        static string salt;
+        byte[] Key;
+        byte[] IV;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             DateTime currentDate = DateTime.Now;
@@ -220,6 +230,29 @@ namespace Application_Security_Assignment_190246N
                 Response.Cookies.Add(new HttpCookie("AuthTokenFailCount", guid));
                 Response.Redirect("Login.aspx", false);
             }
+        }
+
+        //Encrypt text
+        protected byte[] encryptData(string data)
+        {
+            byte[] cipherText = null;
+            try
+            {
+                RijndaelManaged cipher = new RijndaelManaged();
+                cipher.IV = IV;
+                cipher.Key = Key;
+                ICryptoTransform encryptTransform = cipher.CreateEncryptor();
+                //ICryptoTransform decryptTransform = cipher.CreateDecryptor();
+                byte[] plainText = Encoding.UTF8.GetBytes(data);
+                cipherText = encryptTransform.TransformFinalBlock(plainText, 0,
+               plainText.Length);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally { }
+            return cipherText;
         }
     }
 }
