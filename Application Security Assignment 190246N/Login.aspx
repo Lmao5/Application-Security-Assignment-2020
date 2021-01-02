@@ -19,6 +19,9 @@
                 <asp:TextBox ID="passwordTB" runat="server" placeholder="Password" CssClass="form-control" type="password" onkeyup="javascript:validatePassword()"></asp:TextBox>
                 <asp:Label ID="passwordError" runat="server"></asp:Label>
                 </div>
+                <div class="mb-3">
+                    <p>Create an account <a href="Registration.aspx">here</a>!</p>
+                </div>
                 <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/>
                 <asp:Button ID="submitBtn" runat="server" Text="Submit" CssClass="btn btn-primary btn-style" OnClick="submitBtn_Click"/>
             </form>

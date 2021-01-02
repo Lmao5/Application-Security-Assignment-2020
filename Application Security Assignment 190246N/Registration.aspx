@@ -9,6 +9,7 @@
         <div class="row">
             <div class="col-md-8">
            <form id="registrationForm">
+                <p><asp:Label ID="errorMsg" runat="server"></asp:Label></p>
                <div class="mb-3 row">
                    <div class="col-md-6">
                         <label for="firstNameLbl" class="form-label">First Name</label>

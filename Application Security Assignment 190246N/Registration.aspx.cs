@@ -65,7 +65,7 @@ namespace Application_Security_Assignment_190246N
 
             bool validCaptcha = ValidateCaptcha();
 
-            if (validInput == true && validCaptcha == true && scores != 5)
+            if (validInput == true && validCaptcha == true && scores == 5)
             {
                 //submitBtn.Enabled = true;
                 //secondPasswordTB.Text = validCaptcha.ToString();
@@ -93,11 +93,23 @@ namespace Application_Security_Assignment_190246N
                 Key = cipher.Key;
                 IV = cipher.IV;
 
-                CreateAccount();
+                bool presentEmail = getEmail(emailTB.Text);
 
+                if (presentEmail == true)
+                {
+                    errorMsg.Text = "Please choose another email for registration";
+                    errorMsg.ForeColor = Color.Red;
+                    emailError.Text = "Please choose another email for registration";
+                    emailError.ForeColor = Color.Red;
+                    //Response.Redirect("Registration.aspx",false);
+                }
+                else
+                {
+                    CreateAccount();
+                    //Redirect to Login page
+                    Response.Redirect("Login.aspx", false);
+                }
 
-                //Redirect to Login page
-                Response.Redirect("Login.aspx",false);
             }
             else
             {
@@ -500,6 +512,53 @@ namespace Application_Security_Assignment_190246N
                 Console.WriteLine(ex);
                 throw new Exception(ex.ToString());
             }
+        }
+
+        protected bool getEmail(string email)
+        {
+            bool resultEmail = false;
+            SqlConnection con = new SqlConnection(DatabaseConnectionString);
+
+            //Find salt based on email
+            string sqlString = "SELECT email FROM userInfo WHERE email=@Email";
+            SqlCommand com = new SqlCommand(sqlString, con);
+            com.Parameters.AddWithValue("@Email", email);
+
+            try
+            {
+                con.Open();
+                using (SqlDataReader reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["email"] != null)
+                        {
+                            if (reader["email"] != DBNull.Value)
+                            {
+                                //resultEmail = reader["email"].ToString();
+                                resultEmail = true;
+                            }
+                            else
+                            {
+                                resultEmail = false;
+                            }
+                        }
+                        else
+                        {
+                            resultEmail = false;
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                //Error Code here
+                Console.WriteLine(ex);
+                throw new Exception(ex.ToString());
+            }
+            finally { con.Close(); }
+
+            return resultEmail;
         }
     }
 }

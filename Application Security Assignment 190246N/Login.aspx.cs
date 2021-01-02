@@ -117,7 +117,7 @@ namespace Application_Security_Assignment_190246N
             {
                 Session["loginFailureCount"] = 0;
                 var loginFailCount = Session["loginFailureCount"];
-                emailError.Text = loginFailCount.ToString();
+                //emailError.Text = loginFailCount.ToString();
             }
         }
 
@@ -147,7 +147,7 @@ namespace Application_Security_Assignment_190246N
                     emailError.Visible = true;
                 }
             }
-            //Checks if both passwords are the same
+            //Checks if password exists or not
             if (String.IsNullOrEmpty(passwordTB.Text))
             {
                 passwordError.Text = "Please enter your password";
