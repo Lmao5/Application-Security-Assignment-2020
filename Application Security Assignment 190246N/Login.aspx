@@ -34,11 +34,16 @@
             var email = document.getElementById('<%=emailTB.ClientID%>').value;
 
             //Checks if email has a least the minimum length of 4
-            if (email.length < 4) {
+            if (email.length <= 4) {
                 document.getElementById('<%=emailError.ClientID%>').innerHTML = "Please enter a valid email address";
                 document.getElementById('<%=emailError.ClientID%>').style.color = "Red";
                 document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
                 return "Email is non-existant";
+            }
+            else if (email.search(/[@]/) == -1) {
+                document.getElementById('<%=emailError.ClientID%>').innerHTML = "Please enter a valid email address";
+                document.getElementById('<%=emailError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
             }
             else {
                 document.getElementById('<%=emailError.ClientID%>').innerHTML = "Excellent";

@@ -95,6 +95,7 @@ namespace Application_Security_Assignment_190246N
 
                 bool presentEmail = getEmail(emailTB.Text);
 
+                //Checks if email is present or not
                 if (presentEmail == true)
                 {
                     errorMsg.Text = "Please choose another email for registration";
@@ -113,8 +114,9 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
+                ValidateInput();
                 //submitBtn.Enabled = false;
-                Response.Redirect("Registration.aspx", false);
+                //Response.Redirect("Registration.aspx", false);
             }
 
 

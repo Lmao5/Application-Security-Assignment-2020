@@ -227,10 +227,17 @@ namespace Application_Security_Assignment_190246N
                 //Then we call the database
                 if (validEntry == true)
                 {
+                    //User session
+                    Session["emailLogin"] = emailTB.Text;
+                    string guid = Guid.NewGuid().ToString();
+                    Session["AuthToken"] = guid;
+
+                    Response.Cookies.Add(new HttpCookie("AuthToken",guid));
                     Response.Redirect("User.aspx", false);
                 }
                 else
                 {
+                    //ValidateInput();
                     string guid = Guid.NewGuid().ToString();
                     Session["AuthTokenFailCount"] = guid;
                     int currentLoginFailCount = (int)Session["loginFailureCount"];
@@ -241,6 +248,7 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
+                //ValidateInput();
                 string guid = Guid.NewGuid().ToString();
                 Session["AuthTokenFailCount"] = guid;
                 int currentLoginFailCount = (int)Session["loginFailureCount"];
