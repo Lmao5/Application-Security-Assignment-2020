@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace Application_Security_Assignment_190246N
 {
-    public partial class _404 : System.Web.UI.Page
+    public partial class _500 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -16,7 +16,7 @@ namespace Application_Security_Assignment_190246N
 
         protected void backBtn_Click(object sender, EventArgs e)
         {
-            Response.Redirect("Home.aspx", false);
+            Response.Redirect("Home.aspx",false);
         }
     }
 }

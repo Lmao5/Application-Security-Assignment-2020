@@ -7,16 +7,11 @@ using System.Web.UI.WebControls;
 
 namespace Application_Security_Assignment_190246N
 {
-    public partial class _404 : System.Web.UI.Page
+    public partial class changePassword : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
 
-        }
-
-        protected void backBtn_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("Home.aspx", false);
         }
     }
 }

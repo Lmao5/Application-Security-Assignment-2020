@@ -67,11 +67,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="403.aspx" />
     <Content Include="404.aspx" />
+    <Content Include="500.aspx" />
     <Content Include="App_Data\ApplicationSecurityAssignment.mdf" />
     <Content Include="App_Data\ApplicationSecurityAssignment_log.ldf">
       <DependentUpon>ApplicationSecurityAssignment.mdf</DependentUpon>
     </Content>
+    <Content Include="changePassword.aspx" />
+    <Content Include="GenericError.aspx" />
     <Content Include="Home.aspx" />
     <Content Include="js\main.js" />
     <Content Include="Login.aspx" />
@@ -80,12 +84,40 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="403.aspx.cs">
+      <DependentUpon>403.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="403.aspx.designer.cs">
+      <DependentUpon>403.aspx</DependentUpon>
+    </Compile>
     <Compile Include="404.aspx.cs">
       <DependentUpon>404.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="404.aspx.designer.cs">
       <DependentUpon>404.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="500.aspx.cs">
+      <DependentUpon>500.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="500.aspx.designer.cs">
+      <DependentUpon>500.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="changePassword.aspx.cs">
+      <DependentUpon>changePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="changePassword.aspx.designer.cs">
+      <DependentUpon>changePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GenericError.aspx.cs">
+      <DependentUpon>GenericError.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GenericError.aspx.designer.cs">
+      <DependentUpon>GenericError.aspx</DependentUpon>
     </Compile>
     <Compile Include="Home.aspx.cs">
       <DependentUpon>Home.aspx</DependentUpon>

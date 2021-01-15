@@ -11,7 +11,7 @@ namespace Application_Security_Assignment_190246N
 {
 
 
-    public partial class _404
+    public partial class _403
     {
 
         /// <summary>
