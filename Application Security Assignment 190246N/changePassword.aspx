@@ -30,7 +30,7 @@
                             <asp:Label ID="newPasswordError2" runat="server"></asp:Label>
                         </div>
                         <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-                        <asp:Button ID="submitBtn" runat="server" Text="Submit" CssClass="btn btn-primary btn-style" />
+                        <asp:Button ID="submitBtn" runat="server" Text="Submit" CssClass="btn btn-primary btn-style" OnClick="submitBtn_Click" />
                     </form>
                 </div>
             </div>
