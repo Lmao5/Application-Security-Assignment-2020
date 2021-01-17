@@ -76,7 +76,7 @@ namespace Application_Security_Assignment_190246N
                     if ((int)Session["loginFailureCount"] > 3)
                     {
                         //first time disable button
-                        if(Session["lastFailDate"] == null)
+                        if (Session["lastFailDate"] == null)
                         {
                             Session["lastFailDate"] = DateTime.Now;
                             submitBtn.Enabled = false;
@@ -85,7 +85,7 @@ namespace Application_Security_Assignment_190246N
                         {
                             DateTime lastFailDate = Convert.ToDateTime(Session["lastFailDate"]);
                             double minuteDifference = currentDate.Subtract(lastFailDate).TotalMinutes;
-                            if(minuteDifference > 1)
+                            if (minuteDifference > 1)
                             {
                                 //Remove counter and last failure session
                                 Session.Remove("lastFailDate");
@@ -160,7 +160,7 @@ namespace Application_Security_Assignment_190246N
                 passwordError.Visible = false;
                 passwordError.ForeColor = Color.Green;
             }
-            if(emailError.ForeColor == Color.Green && passwordError.ForeColor == Color.Green)
+            if (emailError.ForeColor == Color.Green && passwordError.ForeColor == Color.Green)
             {
                 return true;
             }
@@ -232,7 +232,7 @@ namespace Application_Security_Assignment_190246N
                     string guid = Guid.NewGuid().ToString();
                     Session["AuthToken"] = guid;
 
-                    Response.Cookies.Add(new HttpCookie("AuthToken",guid));
+                    Response.Cookies.Add(new HttpCookie("AuthToken", guid));
                     Response.Redirect("User.aspx", false);
                 }
                 else
@@ -337,9 +337,9 @@ namespace Application_Security_Assignment_190246N
                 {
                     while (reader.Read())
                     {
-                        if(reader["passwordSalt"] != null)
+                        if (reader["passwordSalt"] != null)
                         {
-                            if(reader["passwordSalt"] != DBNull.Value)
+                            if (reader["passwordSalt"] != DBNull.Value)
                             {
                                 dbSalt = reader["passwordSalt"].ToString();
                             }
@@ -368,7 +368,7 @@ namespace Application_Security_Assignment_190246N
             string resultSalt = getDBSalt(email);
             try
             {
-                if(resultHash != null && resultHash.Length > 0 && resultSalt != null && resultSalt.Length > 0)
+                if (resultHash != null && resultHash.Length > 0 && resultSalt != null && resultSalt.Length > 0)
                 {
                     string passwordWithSalt = password + resultSalt;
                     byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(passwordWithSalt));
@@ -389,7 +389,7 @@ namespace Application_Security_Assignment_190246N
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //throw new Exception(ex.ToString());
                 errorMsg.Text = ex.ToString();

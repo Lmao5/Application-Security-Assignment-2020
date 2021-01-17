@@ -14,6 +14,7 @@ using System.Text;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace Application_Security_Assignment_190246N
 {
@@ -120,7 +121,7 @@ namespace Application_Security_Assignment_190246N
             }
 
 
-            
+
         }
 
         private int checkPassword(string password)
@@ -217,7 +218,7 @@ namespace Application_Security_Assignment_190246N
             {
                 //Checks if email addres is actually email address
                 bool isEmail = Regex.IsMatch(emailTB.Text, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
-                if(isEmail == true)
+                if (isEmail == true)
                 {
                     emailError.Text = "Excellent";
                     emailError.ForeColor = Color.Green;
@@ -355,7 +356,7 @@ namespace Application_Security_Assignment_190246N
             }
 
             //Checks if both passwords are the same
-            if(firstPasswordTB.Text != secondPasswordTB.Text)
+            if (firstPasswordTB.Text != secondPasswordTB.Text)
             {
                 secondPasswordError.Text = "Please ensure that both passwords are the same";
                 secondPasswordError.Visible = true;
@@ -415,7 +416,7 @@ namespace Application_Security_Assignment_190246N
             //Retrieves captcha response from captcha api
             string captchaResponse = Request.Form["g-recaptcha-response"];
 
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://www.google.com/recaptcha/api/siteverify?secret=6LekWxYaAAAAAOJF1_WrjjmjffAFI2YN2ZWlmm1i &response="+captchaResponse);
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://www.google.com/recaptcha/api/siteverify?secret=6LekWxYaAAAAAOJF1_WrjjmjffAFI2YN2ZWlmm1i &response=" + captchaResponse);
 
             try
             {
@@ -430,15 +431,16 @@ namespace Application_Security_Assignment_190246N
 
                         reCaptchaResponseObject jsonObject = js.Deserialize<reCaptchaResponseObject>(jsonResponse);
 
-                        Console.WriteLine("--- Testing ---");
-                        Console.WriteLine(jsonObject);
+                        //This code will be displayed in the output window
+                        Debug.WriteLine("--- Testing ---");
+                        Debug.WriteLine(jsonObject);
                         //Read success property in json object
                         result = Convert.ToBoolean(jsonObject.success);
                     }
                 }
                 return result;
             }
-            catch(WebException ex)
+            catch (WebException ex)
             {
                 throw ex;
             }
@@ -489,7 +491,7 @@ namespace Application_Security_Assignment_190246N
                             cmd.Parameters.AddWithValue("@numberCard", Convert.ToBase64String(encryptData(cardNumberTB.Text.Trim())));
                             cmd.Parameters.AddWithValue("@cvvNumber", Convert.ToBase64String(encryptData(CVVTB.Text.Trim())));
                             cmd.Parameters.AddWithValue("@cardExpiry", Convert.ToBase64String(encryptData(cardExpiryTB.Text.Trim())));
-                            
+
                             //Password salt & hash
                             cmd.Parameters.AddWithValue("@passwordHash", finalHash);
                             cmd.Parameters.AddWithValue("@passwordSalt", salt);
