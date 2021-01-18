@@ -213,7 +213,7 @@ namespace Application_Security_Assignment_190246N
 
         protected void changePassBtn_Click(object sender, EventArgs e)
         {
-
+            Response.Redirect("changePassword.aspx", false);
         }
 
         protected void logoutBtn_Click(object sender, EventArgs e)

@@ -34,6 +34,7 @@ namespace Application_Security_Assignment_190246N
                     //String fullName = retrieveInfo(Session["emailLogin"].ToString());
                     if (validUser == true)
                     {
+                        currentPasswordError.Text = "It works";
                         //userName.Text = fullName;
                     }
                     else
@@ -136,6 +137,11 @@ namespace Application_Security_Assignment_190246N
             {
                 throw ex;
             }
+        }
+
+        private bool ValidateInput()
+        {
+            return true;
         }
 
         protected void submitBtn_Click(object sender, EventArgs e)

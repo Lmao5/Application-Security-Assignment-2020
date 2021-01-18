@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="400.aspx" />
     <Content Include="403.aspx" />
     <Content Include="404.aspx" />
     <Content Include="500.aspx" />
@@ -84,6 +85,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="400.aspx.cs">
+      <DependentUpon>400.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="400.aspx.designer.cs">
+      <DependentUpon>400.aspx</DependentUpon>
+    </Compile>
     <Compile Include="403.aspx.cs">
       <DependentUpon>403.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
