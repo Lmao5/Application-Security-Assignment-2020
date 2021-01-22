@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Script.Serialization;
@@ -53,8 +56,6 @@ namespace Application_Security_Assignment_190246N
         protected bool validateUser(string email)
         {
             bool resultEmail = false;
-            //string resultFirstName = null;
-            //string resultLastName = null;
             SqlConnection con = new SqlConnection(DatabaseConnectionString);
 
             //Find salt based on email
@@ -112,9 +113,9 @@ namespace Application_Security_Assignment_190246N
             public string Password { get; set; }
             public DateTime LastUpdate { get; set; }
             public byte[] IV { get; set; }
-            public byte[] Key{ get; set; }
+            public byte[] Key { get; set; }
             public userInfo(string email, string firstName, string lastName,
-                string password, DateTime lastUpdate, byte[]iv, byte[] key)
+                string password, DateTime lastUpdate, byte[] iv, byte[] key)
             {
                 Email = email;
                 FirstName = firstName;
@@ -194,7 +195,7 @@ namespace Application_Security_Assignment_190246N
                 newPasswordError.Visible = true;
             }
             //Checks to ensure that old password is not used again
-            else if (newPasswordTB.Text == currentPasswordTB.Text)
+            else if (currentPasswordTB.Text == newPasswordTB.Text)
             {
                 newPasswordError.Text = "Please enter that your new password does not match your current password";
                 newPasswordError.ForeColor = Color.Red;
@@ -215,7 +216,7 @@ namespace Application_Security_Assignment_190246N
                 newPasswordError2.Visible = true;
             }
             //Checks to ensure that old password is not used again
-            else if (newPasswordTB2.Text == currentPasswordTB.Text)
+            else if (currentPasswordTB.Text == newPasswordTB2.Text)
             {
                 newPasswordError2.Text = "Please enter that your new password does not match your current password";
                 newPasswordError2.ForeColor = Color.Red;
@@ -236,7 +237,7 @@ namespace Application_Security_Assignment_190246N
             }
 
 
-            if(currentPasswordTB.ForeColor == greenColour && 
+            if (currentPasswordError.ForeColor == greenColour &&
                 newPasswordError.ForeColor == greenColour &&
                 newPasswordError2.ForeColor == greenColour)
             {
@@ -313,6 +314,120 @@ namespace Application_Security_Assignment_190246N
                     return false;
             }
         }
+        //Retrieves passwordHash from specific email
+        protected string getDBHash(string email)
+        {
+            string dbHash = null;
+            SqlConnection con = new SqlConnection(DatabaseConnectionString);
+
+            //Find hash based on email
+            string sqlString = "SELECT passwordHash FROM userInfo WHERE email=@Email";
+            SqlCommand com = new SqlCommand(sqlString, con);
+            com.Parameters.AddWithValue("@Email", email);
+
+            try
+            {
+                con.Open();
+                using (SqlDataReader reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["passwordHash"] != null)
+                        {
+                            if (reader["passwordHash"] != DBNull.Value)
+                            {
+                                dbHash = reader["passwordHash"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                //Error Code here
+                Console.WriteLine(ex);
+                throw new Exception(ex.ToString());
+            }
+            finally { con.Close(); }
+
+            return dbHash;
+        }
+        //Retrieves passwordSalt from specific email
+        protected string getDBSalt(string email)
+        {
+            string dbSalt = null;
+            SqlConnection con = new SqlConnection(DatabaseConnectionString);
+
+            //Find salt based on email
+            string sqlString = "SELECT passwordSalt FROM userInfo WHERE email=@Email";
+            SqlCommand com = new SqlCommand(sqlString, con);
+            com.Parameters.AddWithValue("@Email", email);
+
+            try
+            {
+                con.Open();
+                using (SqlDataReader reader = com.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["passwordSalt"] != null)
+                        {
+                            if (reader["passwordSalt"] != DBNull.Value)
+                            {
+                                dbSalt = reader["passwordSalt"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                //Error Code here
+                Console.WriteLine(ex);
+                throw new Exception(ex.ToString());
+            }
+            finally { con.Close(); }
+
+            return dbSalt;
+        }
+        //This functions checks if user enters the correct current password
+        protected bool ValidateEntry()
+        {
+            string email = Session["emailLogin"].ToString();
+            string password = currentPasswordTB.Text.Trim();
+            SHA512Managed hashing = new SHA512Managed();
+            string resultHash = getDBHash(email);
+            string resultSalt = getDBSalt(email);
+            try
+            {
+                if (resultHash != null && resultHash.Length > 0 && resultSalt != null && resultSalt.Length > 0)
+                {
+                    string passwordWithSalt = password + resultSalt;
+                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(passwordWithSalt));
+                    string userHash = Convert.ToBase64String(hashWithSalt);
+
+                    //If calculated salt matches hash
+                    if (userHash.Equals(resultHash))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                //throw new Exception(ex.ToString());
+                errorMsg.Text = ex.ToString();
+                return false;
+            }
+        }
 
         protected void submitBtn_Click(object sender, EventArgs e)
         {
@@ -324,13 +439,16 @@ namespace Application_Security_Assignment_190246N
 
             bool goodPassword = checkScore(passwordScore);
 
+            bool validEntry = ValidateEntry();
+
             //if user has entered valid format and is not a bot
             if (validCaptcha == true && validInput == true)
             {
-                //if password has all the necesssary characters
-                if(goodPassword == true)
+                //if password has all the necesssary characters & user has entered the correct current password
+                if (goodPassword == true && validEntry == true)
                 {
-
+                    Debug.WriteLine("It works");
+                    errorMsg.Text = "Cool bro";
                 }
                 else
                 {
