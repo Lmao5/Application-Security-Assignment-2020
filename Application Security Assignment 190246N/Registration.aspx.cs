@@ -68,32 +68,6 @@ namespace Application_Security_Assignment_190246N
 
             if (validInput == true && validCaptcha == true && scores == 5)
             {
-                //submitBtn.Enabled = true;
-                //secondPasswordTB.Text = validCaptcha.ToString();
-                //Retrieve password input
-                string password = firstPasswordTB.Text.ToString().Trim();
-
-                //Generate random salt
-                RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-                byte[] saltByte = new byte[8];
-
-                //Fills array of bytes with a cryptographically strong sequence of random values.
-                rng.GetBytes(saltByte);
-                salt = Convert.ToBase64String(saltByte);
-
-                SHA512Managed hashing = new SHA512Managed();
-                string pwdWithSalt = password + salt;
-
-                byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(password));
-                byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
-
-                finalHash = Convert.ToBase64String(hashWithSalt);
-
-                RijndaelManaged cipher = new RijndaelManaged();
-                cipher.GenerateKey();
-                Key = cipher.Key;
-                IV = cipher.IV;
-
                 bool presentEmail = getEmail(emailTB.Text);
 
                 //Checks if email is present or not
@@ -107,6 +81,31 @@ namespace Application_Security_Assignment_190246N
                 }
                 else
                 {
+                    //submitBtn.Enabled = true;
+                    //secondPasswordTB.Text = validCaptcha.ToString();
+                    //Retrieve password input
+                    string password = firstPasswordTB.Text.ToString().Trim();
+
+                    //Generate random salt
+                    RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                    byte[] saltByte = new byte[8];
+
+                    //Fills array of bytes with a cryptographically strong sequence of random values.
+                    rng.GetBytes(saltByte);
+                    salt = Convert.ToBase64String(saltByte);
+
+                    SHA512Managed hashing = new SHA512Managed();
+                    string pwdWithSalt = password + salt;
+
+                    byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(password));
+                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+
+                    finalHash = Convert.ToBase64String(hashWithSalt);
+
+                    RijndaelManaged cipher = new RijndaelManaged();
+                    cipher.GenerateKey();
+                    Key = cipher.Key;
+                    IV = cipher.IV;
                     CreateAccount();
                     //Redirect to Login page
                     Response.Redirect("Login.aspx", false);
@@ -119,7 +118,6 @@ namespace Application_Security_Assignment_190246N
                 //submitBtn.Enabled = false;
                 //Response.Redirect("Registration.aspx", false);
             }
-
 
 
         }
