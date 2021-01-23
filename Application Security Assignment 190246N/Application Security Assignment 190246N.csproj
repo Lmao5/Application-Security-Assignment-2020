@@ -71,6 +71,7 @@
     <Content Include="403.aspx" />
     <Content Include="404.aspx" />
     <Content Include="500.aspx" />
+    <Content Include="502.aspx" />
     <Content Include="App_Data\ApplicationSecurityAssignment.mdf" />
     <Content Include="App_Data\ApplicationSecurityAssignment_log.ldf">
       <DependentUpon>ApplicationSecurityAssignment.mdf</DependentUpon>
@@ -112,6 +113,13 @@
     </Compile>
     <Compile Include="500.aspx.designer.cs">
       <DependentUpon>500.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="502.aspx.cs">
+      <DependentUpon>502.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="502.aspx.designer.cs">
+      <DependentUpon>502.aspx</DependentUpon>
     </Compile>
     <Compile Include="changePassword.aspx.cs">
       <DependentUpon>changePassword.aspx</DependentUpon>

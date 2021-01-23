@@ -402,11 +402,13 @@ namespace Application_Security_Assignment_190246N
         //an object for recaptcha to store info
         public class reCaptchaResponseObject
         {
+            //store success string
             public string success { get; set; }
+            //store list of error messages from api
             public List<string> ErrorMessage { get; set; }
         }
 
-
+        //Google Recaptcha API V3
         public bool ValidateCaptcha()
         {
             bool result = true;
@@ -469,51 +471,56 @@ namespace Application_Security_Assignment_190246N
 
         private void CreateAccount()
         {
-            try
+            //Establishing database connection
+            using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
             {
-                //Establishing database connection
-                using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO userInfo VALUES(@email, @firstName, @lastName, @dob, @nameOnCard, @numberCard, @cvvNumber, @cardExpiry, @passwordHash, @passwordSalt, @lastUpdate, @IV, @Key)"))
                 {
-                    using (SqlCommand cmd = new SqlCommand("INSERT INTO userInfo VALUES(@email, @firstName, @lastName, @dob, @nameOnCard, @numberCard, @cvvNumber, @cardExpiry, @passwordHash, @passwordSalt, @lastUpdate, @IV, @Key)"))
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
                     {
-                        using (SqlDataAdapter sda = new SqlDataAdapter())
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddWithValue("@email", emailTB.Text.Trim());
+                        cmd.Parameters.AddWithValue("@firstName", firstNameTB.Text.Trim());
+                        cmd.Parameters.AddWithValue("@lastName", lastNameTB.Text.Trim());
+                        cmd.Parameters.AddWithValue("@dob", Convert.ToDateTime(dobTB.Text));
+
+                        //Card Info
+                        cmd.Parameters.AddWithValue("@nameOnCard", Convert.ToBase64String(encryptData(nameOnCardTB.Text.Trim())));
+                        cmd.Parameters.AddWithValue("@numberCard", Convert.ToBase64String(encryptData(cardNumberTB.Text.Trim())));
+                        cmd.Parameters.AddWithValue("@cvvNumber", Convert.ToBase64String(encryptData(CVVTB.Text.Trim())));
+                        cmd.Parameters.AddWithValue("@cardExpiry", Convert.ToBase64String(encryptData(cardExpiryTB.Text.Trim())));
+
+                        //Password salt & hash
+                        cmd.Parameters.AddWithValue("@passwordHash", finalHash);
+                        cmd.Parameters.AddWithValue("@passwordSalt", salt);
+
+                        //Last Updated
+                        cmd.Parameters.AddWithValue("@lastUpdate", DateTime.Now);
+
+                        //Key and IV
+                        cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
+                        cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
+                        cmd.Connection = con;
+                        try
                         {
-                            cmd.CommandType = CommandType.Text;
-                            cmd.Parameters.AddWithValue("@email", emailTB.Text.Trim());
-                            cmd.Parameters.AddWithValue("@firstName", firstNameTB.Text.Trim());
-                            cmd.Parameters.AddWithValue("@lastName", lastNameTB.Text.Trim());
-                            cmd.Parameters.AddWithValue("@dob", Convert.ToDateTime(dobTB.Text));
-
-                            //Card Info
-                            cmd.Parameters.AddWithValue("@nameOnCard", Convert.ToBase64String(encryptData(nameOnCardTB.Text.Trim())));
-                            cmd.Parameters.AddWithValue("@numberCard", Convert.ToBase64String(encryptData(cardNumberTB.Text.Trim())));
-                            cmd.Parameters.AddWithValue("@cvvNumber", Convert.ToBase64String(encryptData(CVVTB.Text.Trim())));
-                            cmd.Parameters.AddWithValue("@cardExpiry", Convert.ToBase64String(encryptData(cardExpiryTB.Text.Trim())));
-
-                            //Password salt & hash
-                            cmd.Parameters.AddWithValue("@passwordHash", finalHash);
-                            cmd.Parameters.AddWithValue("@passwordSalt", salt);
-
-                            //Last Updated
-                            cmd.Parameters.AddWithValue("@lastUpdate", DateTime.Now);
-
-                            //Key and IV
-                            cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
-                            cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
-                            cmd.Connection = con;
                             con.Open();
                             cmd.ExecuteNonQuery();
+                        }
+                        catch (SqlException ex)
+                        {
+                            //Error Code here
+                            Console.WriteLine(ex);
+                            throw new Exception(ex.ToString());
+                        }
+                        finally
+                        {
                             con.Close();
                         }
                     }
                 }
+
             }
-            catch (SqlException ex)
-            {
-                //Error Code here
-                Console.WriteLine(ex);
-                throw new Exception(ex.ToString());
-            }
+
         }
 
         protected bool getEmail(string email)
@@ -555,7 +562,7 @@ namespace Application_Security_Assignment_190246N
             catch (SqlException ex)
             {
                 //Error Code here
-                Console.WriteLine(ex);
+                Debug.WriteLine(ex);
                 throw new Exception(ex.ToString());
             }
             finally { con.Close(); }

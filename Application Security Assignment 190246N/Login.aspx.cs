@@ -172,11 +172,13 @@ namespace Application_Security_Assignment_190246N
         //an object for recaptcha to store info
         public class reCaptchaResponseObject
         {
+            //store success string
             public string success { get; set; }
+            //store list of error messages
             public List<string> ErrorMessage { get; set; }
         }
 
-
+        //Google Recaptcha API V3
         public bool ValidateCaptcha()
         {
             bool result = true;
@@ -323,6 +325,7 @@ namespace Application_Security_Assignment_190246N
         protected string getDBSalt(string email)
         {
             string dbSalt = null;
+            //Initialise DB connection
             SqlConnection con = new SqlConnection(DatabaseConnectionString);
 
             //Find salt based on email

@@ -101,7 +101,9 @@ namespace Application_Security_Assignment_190246N
         }
         public class reCaptchaResponseObject
         {
+            //store success string
             public string success { get; set; }
+            //store list of error messages from api
             public List<string> ErrorMessage { get; set; }
         }
 
@@ -114,6 +116,10 @@ namespace Application_Security_Assignment_190246N
             public DateTime LastUpdate { get; set; }
             public byte[] IV { get; set; }
             public byte[] Key { get; set; }
+            public userInfo()
+            {
+
+            }
             public userInfo(string email, string firstName, string lastName,
                 string password, DateTime lastUpdate, byte[] iv, byte[] key)
             {
@@ -126,10 +132,36 @@ namespace Application_Security_Assignment_190246N
                 Key = key;
             }
 
+            /*public userInfo getUserInfo(string email)
+            {
+                string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
+                using (SqlConnection sqlConn = new SqlConnection(DatabaseConnectionString))
+                {
+                    string sqlStatement = "UPDATE userInfo SET ";
+                    //string sqlStatement = "UPDATE CardInfo SET CardName = @paraCardName, CardNumber = @paraCardNumber, CardExpiry = @paraCardExpiry, CVVNumber = @paraCVVNumber, StillValid = @paraStillValid WHERE CardNumber = @paraPreviousCardNumber";
+                    using (SqlCommand sqlComm = new SqlCommand(sqlStatement))
+                    {
+                        try
+                        {
+                            //uif = new userInfo();
+                            //return uif;
+
+                        }
+                        catch (SqlException ex)
+                        {
+                            throw new Exception(ex.ToString());
+                        }
+                        finally
+                        {
+                        }
+                    }
+                }
+            }*/
+
 
         }
 
-
+        //Google Recaptcha API V3
         public bool ValidateCaptcha()
         {
             bool result = true;
@@ -170,7 +202,7 @@ namespace Application_Security_Assignment_190246N
 
         private bool ValidateInput()
         {
-
+            //Store green colour in here
             var greenColour = Color.Green;
 
             //Checks if currentPassword field is empty
