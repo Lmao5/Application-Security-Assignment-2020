@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
@@ -112,7 +113,8 @@ namespace Application_Security_Assignment_190246N
             public string Email { get; set; }
             public string FirstName { get; set; }
             public string LastName { get; set; }
-            public string Password { get; set; }
+            public string PasswordHash { get; set; }
+            public string PasswordSalt { get; set; }
             public DateTime LastUpdate { get; set; }
             public byte[] IV { get; set; }
             public byte[] Key { get; set; }
@@ -121,44 +123,100 @@ namespace Application_Security_Assignment_190246N
 
             }
             public userInfo(string email, string firstName, string lastName,
-                string password, DateTime lastUpdate, byte[] iv, byte[] key)
+                string passwordHash, string passwordSalt, DateTime lastUpdate, byte[] iv, byte[] key)
             {
                 Email = email;
                 FirstName = firstName;
                 LastName = lastName;
-                Password = password;
+                PasswordHash = passwordHash;
+                PasswordSalt = passwordSalt;
                 LastUpdate = lastUpdate;
                 IV = iv;
                 Key = key;
             }
-
-            /*public userInfo getUserInfo(string email)
+            public userInfo getUserInfo(string email)
             {
                 string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
                 using (SqlConnection sqlConn = new SqlConnection(DatabaseConnectionString))
                 {
-                    string sqlStatement = "UPDATE userInfo SET ";
-                    //string sqlStatement = "UPDATE CardInfo SET CardName = @paraCardName, CardNumber = @paraCardNumber, CardExpiry = @paraCardExpiry, CVVNumber = @paraCVVNumber, StillValid = @paraStillValid WHERE CardNumber = @paraPreviousCardNumber";
+                    string sqlStatement = "SELECT * FROM userInfo WHERE email = @paraEmail";
+                    using (SqlDataAdapter da = new SqlDataAdapter(sqlStatement, sqlConn))
+                    {
+                        da.SelectCommand.Parameters.AddWithValue("@paraEmail", email);
+                        using (DataSet ds = new DataSet())
+                        {
+                            try
+                            {
+                                da.Fill(ds);
+
+                                userInfo uif = null;
+                                int rec_cnt = ds.Tables[0].Rows.Count;
+                                if (rec_cnt == 1)
+                                {
+                                    DataRow row = ds.Tables[0].Rows[0];
+
+                                    //string email = row["email"].ToString();
+                                    string firstName = row["firstName"].ToString();
+                                    string lastName = row["lastName"].ToString();
+                                    string passwordHash = row["passwordHash"].ToString();
+                                    string passwordSalt = row["passwordSalt"].ToString();
+                                    DateTime lastUpdate = Convert.ToDateTime(row["lastUpdate"].ToString());
+                                    byte[] iv = Convert.FromBase64String(row["IV"].ToString());
+                                    byte[] key = Convert.FromBase64String(row["Key"].ToString());
+
+                                    uif = new userInfo(email, firstName, lastName, passwordHash, passwordSalt, lastUpdate, iv, key);
+                                }
+                                return uif;
+                            }
+                            catch (SqlException ex)
+                            {
+                                throw new Exception(ex.ToString());
+                            }
+                            finally
+                            {
+                                Debug.WriteLine("Retrieve userInfo complete!");
+                            }
+                        }
+                    }
+
+                }
+            }
+            public void updatePassword(string passwordHash, string passwordSalt, string email)
+            {
+                string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
+                using (SqlConnection sqlConn = new SqlConnection(DatabaseConnectionString))
+                {
+                    string sqlStatement = "UPDATE userInfo SET passwordHash = @paraPasswordHash, passwordSalt = @paraPasswordSalt, lastUpdate = @paraLastUpdate WHERE email = @paraEmail";
                     using (SqlCommand sqlComm = new SqlCommand(sqlStatement))
                     {
+                        sqlComm.CommandType = CommandType.Text;
+
+                        sqlComm.Parameters.AddWithValue("@paraEmail", email);
+
+                        sqlComm.Parameters.AddWithValue("@paraPasswordHash", passwordHash);
+                        sqlComm.Parameters.AddWithValue("@paraPasswordSalt", passwordSalt);
+                        sqlComm.Parameters.AddWithValue("@paraLastUpdate", DateTime.Now);
+                        
+
+                        sqlComm.Connection = sqlConn;
                         try
                         {
-                            //uif = new userInfo();
-                            //return uif;
-
+                            sqlConn.Open();
+                            sqlComm.ExecuteNonQuery();
                         }
                         catch (SqlException ex)
                         {
+                            Debug.WriteLine(ex.ToString());
                             throw new Exception(ex.ToString());
                         }
                         finally
                         {
+                            sqlConn.Close();
                         }
                     }
                 }
-            }*/
 
-
+            }
         }
 
         //Google Recaptcha API V3
@@ -460,6 +518,57 @@ namespace Application_Security_Assignment_190246N
                 return false;
             }
         }
+        protected bool allowPasswordChange()
+        {
+            string userEmail = Session["emailLogin"].ToString();
+
+            userInfo uif = new userInfo();
+
+            userInfo resultUser = uif.getUserInfo(userEmail);
+            Debug.WriteLine("It works");
+            //errorMsg.Text = resultUser.LastName;
+            Debug.WriteLine(resultUser.LastUpdate);
+            Debug.WriteLine(DateTime.Now);
+
+            DateTime currentDate = DateTime.Now;
+            double minuteDifference = currentDate.Subtract(resultUser.LastUpdate).TotalMinutes;
+            Debug.WriteLine("===================");
+            Debug.WriteLine(minuteDifference);
+
+            if (minuteDifference < 5)
+            {
+                return false;
+            }
+            else if (minuteDifference > 15)
+            {
+                return true;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        /*protected byte[] encryptData(byte[]iv, byte[] key,string data)
+        {
+            byte[] cipherText = null;
+            try
+            {
+                RijndaelManaged cipher = new RijndaelManaged();
+                cipher.IV = iv;
+                cipher.Key = key;
+                ICryptoTransform encryptTransform = cipher.CreateEncryptor();
+                //ICryptoTransform decryptTransform = cipher.CreateDecryptor();
+                byte[] plainText = Encoding.UTF8.GetBytes(data);
+                cipherText = encryptTransform.TransformFinalBlock(plainText, 0,
+               plainText.Length);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally { }
+            return cipherText;
+        }*/
 
         protected void submitBtn_Click(object sender, EventArgs e)
         {
@@ -479,17 +588,50 @@ namespace Application_Security_Assignment_190246N
                 //if password has all the necesssary characters & user has entered the correct current password
                 if (goodPassword == true && validEntry == true)
                 {
-                    Debug.WriteLine("It works");
-                    errorMsg.Text = "Cool bro";
+                    //Checks when password is recently changed
+                    bool passwordChange = allowPasswordChange();
+                    if (passwordChange == true)
+                    {
+                        string userEmail = Session["emailLogin"].ToString();
+
+                        string newPassword = newPasswordTB.Text.ToString().Trim();
+
+                        RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                        byte[] saltByte = new byte[8];
+
+                        rng.GetBytes(saltByte);
+                        string salt = Convert.ToBase64String(saltByte);
+
+                        SHA512Managed hashing = new SHA512Managed();
+                        string pwdWithSalt = newPassword + salt;
+
+                        byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(newPassword));
+                        byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+
+                        string finalHash = Convert.ToBase64String(hashWithSalt);
+
+                        //Call update password function here
+
+                        userInfo uif = new userInfo();
+
+                        uif.updatePassword(finalHash, salt, userEmail);
+                        Response.Redirect("User.aspx",false);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Password age is below 5 minutes");
+                        //Error Code here
+                    }
                 }
                 else
                 {
-
+                    //Error Code here
                 }
             }
             else
             {
-                //
+                //Error Code here
+                //Response.Redirect("User.aspx", false);
             }
 
         }

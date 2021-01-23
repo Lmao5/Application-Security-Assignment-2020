@@ -469,6 +469,7 @@ namespace Application_Security_Assignment_190246N
             return cipherText;
         }
 
+        //Create userAccount Function
         private void CreateAccount()
         {
             //Establishing database connection
@@ -501,17 +502,21 @@ namespace Application_Security_Assignment_190246N
                         cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
                         cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
                         cmd.Connection = con;
+
+                        //Check if statement are correct
                         try
                         {
                             con.Open();
                             cmd.ExecuteNonQuery();
                         }
+                        //Throw error
                         catch (SqlException ex)
                         {
                             //Error Code here
                             Console.WriteLine(ex);
                             throw new Exception(ex.ToString());
                         }
+                        //Close connection
                         finally
                         {
                             con.Close();
