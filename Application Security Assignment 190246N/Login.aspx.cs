@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace Application_Security_Assignment_190246N
 {
@@ -230,12 +231,23 @@ namespace Application_Security_Assignment_190246N
                 if (validEntry == true)
                 {
                     //User session
-                    Session["emailLogin"] = emailTB.Text;
+                    Session["emailLogin"] = HttpUtility.HtmlEncode(emailTB.Text.Trim());
                     string guid = Guid.NewGuid().ToString();
                     Session["AuthToken"] = guid;
 
-                    Response.Cookies.Add(new HttpCookie("AuthToken", guid));
-                    Response.Redirect("User.aspx", false);
+                    //Checks if password expires or not
+                    bool validPassword = validPasswordLifecycle(HttpUtility.HtmlEncode(emailTB.Text.Trim()));
+                    if(validPassword == true)
+                    {
+                        Session["currentPassword"] = HttpUtility.HtmlEncode(passwordTB.Text.Trim());
+                        Response.Cookies.Add(new HttpCookie("AuthToken", guid));
+                        Response.Redirect("changePassword.aspx", false);
+                    }
+                    else
+                    {
+                        Response.Cookies.Add(new HttpCookie("AuthToken", guid));
+                        Response.Redirect("User.aspx", false);
+                    }
                 }
                 else
                 {
@@ -311,10 +323,11 @@ namespace Application_Security_Assignment_190246N
                     }
                 }
             }
+            //Trigger SQL Exception
             catch (SqlException ex)
             {
                 //Error Code here
-                Console.WriteLine(ex);
+                Debug.WriteLine(ex.ToString());
                 throw new Exception(ex.ToString());
             }
             finally { con.Close(); }
@@ -350,10 +363,11 @@ namespace Application_Security_Assignment_190246N
                     }
                 }
             }
+            //Trigger SQL Exception
             catch (SqlException ex)
             {
                 //Error Code here
-                Console.WriteLine(ex);
+                Debug.WriteLine(ex.ToString());
                 throw new Exception(ex.ToString());
             }
             finally { con.Close(); }
@@ -364,8 +378,8 @@ namespace Application_Security_Assignment_190246N
         //This functions checks if email exists in the database or not
         protected bool ValidateEntry()
         {
-            string email = emailTB.Text.Trim();
-            string password = passwordTB.Text.Trim();
+            string email = HttpUtility.HtmlEncode(emailTB.Text.Trim());
+            string password = HttpUtility.HtmlEncode(passwordTB.Text.Trim());
             SHA512Managed hashing = new SHA512Managed();
             string resultHash = getDBHash(email);
             string resultSalt = getDBSalt(email);
@@ -398,6 +412,67 @@ namespace Application_Security_Assignment_190246N
                 errorMsg.Text = ex.ToString();
                 return false;
             }
+        }
+
+        //This functions checks if password is more than 15 minutes old
+        protected bool validPasswordLifecycle(string email)
+        {
+            bool isValid = false;
+            //Initialise DB connection
+            using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
+            {
+                //Find last update based on email
+                string sqlString = "SELECT lastUpdate FROM userInfo WHERE email=@Email";
+                using (SqlCommand com = new SqlCommand(sqlString, con))
+                {
+                    com.Parameters.AddWithValue("@Email", email);
+                    try
+                    {
+                        con.Open();
+                        using (SqlDataReader reader = com.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (reader["lastUpdate"] != null)
+                                {
+                                    if (reader["lastUpdate"] != DBNull.Value)
+                                    {
+                                        //Retrieve last update
+                                        DateTime lastUpate = Convert.ToDateTime(reader["lastUpdate"]);
+
+                                        //Retrieve current datetime
+                                        DateTime currentDate = DateTime.Now;
+
+                                        //Do the math here to calculate minute difference
+                                        double minuteDifference = currentDate.Subtract(lastUpate).TotalMinutes;
+
+                                        //Check if passed the condition
+                                        if (minuteDifference > 15)
+                                        {
+                                            isValid = true;
+                                        }
+                                        else
+                                        {
+                                            isValid = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //Trigger SQL Exception
+                    catch (SqlException ex)
+                    {
+                        throw new Exception(ex.ToString());
+                    }
+                    finally
+                    {
+                        //Close database
+                        con.Close();
+                    }
+                }
+            }
+            return isValid;
         }
     }
 }

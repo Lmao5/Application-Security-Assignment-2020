@@ -40,8 +40,20 @@ namespace Application_Security_Assignment_190246N
                     //String fullName = retrieveInfo(Session["emailLogin"].ToString());
                     if (validUser == true)
                     {
-                        currentPasswordError.Text = "It works";
+                        //currentPasswordError.Text = "It works";
                         //userName.Text = fullName;
+                        string currentPassword = Convert.ToString(Session["currentPassword"]).Trim();
+                        if(String.IsNullOrEmpty(currentPassword))
+                        {
+                            Debug.WriteLine("Setting new password");
+                            //Nothing happens
+                        }
+                        else
+                        {
+                            //Automatically set value of password
+                            currentPasswordTB.Text = currentPassword;
+                            currentPasswordTB.Enabled = false;
+                        }
                     }
                     else
                     {
@@ -615,6 +627,9 @@ namespace Application_Security_Assignment_190246N
                         userInfo uif = new userInfo();
 
                         uif.updatePassword(finalHash, salt, userEmail);
+
+                        Session.Remove("currentPassword");
+
                         Response.Redirect("User.aspx",false);
                     }
                     else
