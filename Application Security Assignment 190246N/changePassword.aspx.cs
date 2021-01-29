@@ -43,7 +43,7 @@ namespace Application_Security_Assignment_190246N
                         //currentPasswordError.Text = "It works";
                         //userName.Text = fullName;
                         string currentPassword = Convert.ToString(Session["currentPassword"]).Trim();
-                        if(String.IsNullOrEmpty(currentPassword))
+                        if (String.IsNullOrEmpty(currentPassword))
                         {
                             Debug.WriteLine("Setting new password");
                             //Nothing happens
@@ -208,7 +208,7 @@ namespace Application_Security_Assignment_190246N
                         sqlComm.Parameters.AddWithValue("@paraPasswordHash", passwordHash);
                         sqlComm.Parameters.AddWithValue("@paraPasswordSalt", passwordSalt);
                         sqlComm.Parameters.AddWithValue("@paraLastUpdate", DateTime.Now);
-                        
+
 
                         sqlComm.Connection = sqlConn;
                         try
@@ -420,77 +420,85 @@ namespace Application_Security_Assignment_190246N
         protected string getDBHash(string email)
         {
             string dbHash = null;
-            SqlConnection con = new SqlConnection(DatabaseConnectionString);
-
-            //Find hash based on email
-            string sqlString = "SELECT passwordHash FROM userInfo WHERE email=@Email";
-            SqlCommand com = new SqlCommand(sqlString, con);
-            com.Parameters.AddWithValue("@Email", email);
-
-            try
+            using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
             {
-                con.Open();
-                using (SqlDataReader reader = com.ExecuteReader())
+
+                //Find hash based on email
+                string sqlString = "SELECT passwordHash FROM userInfo WHERE email=@Email";
+                using (SqlCommand com = new SqlCommand(sqlString, con))
                 {
-                    while (reader.Read())
+                    com.Parameters.AddWithValue("@Email", email);
+
+                    try
                     {
-                        if (reader["passwordHash"] != null)
+                        con.Open();
+                        using (SqlDataReader reader = com.ExecuteReader())
                         {
-                            if (reader["passwordHash"] != DBNull.Value)
+                            while (reader.Read())
                             {
-                                dbHash = reader["passwordHash"].ToString();
+                                if (reader["passwordHash"] != null)
+                                {
+                                    if (reader["passwordHash"] != DBNull.Value)
+                                    {
+                                        dbHash = reader["passwordHash"].ToString();
+                                    }
+                                }
                             }
                         }
                     }
+                    catch (SqlException ex)
+                    {
+                        //Error Code here
+                        Debug.WriteLine(ex);
+                        throw new Exception(ex.ToString());
+                    }
+                    finally { con.Close(); }
+
+                    return dbHash;
                 }
             }
-            catch (SqlException ex)
-            {
-                //Error Code here
-                Console.WriteLine(ex);
-                throw new Exception(ex.ToString());
-            }
-            finally { con.Close(); }
 
-            return dbHash;
         }
         //Retrieves passwordSalt from specific email
         protected string getDBSalt(string email)
         {
             string dbSalt = null;
-            SqlConnection con = new SqlConnection(DatabaseConnectionString);
-
-            //Find salt based on email
-            string sqlString = "SELECT passwordSalt FROM userInfo WHERE email=@Email";
-            SqlCommand com = new SqlCommand(sqlString, con);
-            com.Parameters.AddWithValue("@Email", email);
-
-            try
+            using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
             {
-                con.Open();
-                using (SqlDataReader reader = com.ExecuteReader())
+                //Find salt based on email
+                string sqlString = "SELECT passwordSalt FROM userInfo WHERE email=@Email";
+                using (SqlCommand com = new SqlCommand(sqlString, con))
                 {
-                    while (reader.Read())
+                    com.Parameters.AddWithValue("@Email", email);
+
+                    try
                     {
-                        if (reader["passwordSalt"] != null)
+                        con.Open();
+                        using (SqlDataReader reader = com.ExecuteReader())
                         {
-                            if (reader["passwordSalt"] != DBNull.Value)
+                            while (reader.Read())
                             {
-                                dbSalt = reader["passwordSalt"].ToString();
+                                if (reader["passwordSalt"] != null)
+                                {
+                                    if (reader["passwordSalt"] != DBNull.Value)
+                                    {
+                                        dbSalt = reader["passwordSalt"].ToString();
+                                    }
+                                }
                             }
                         }
                     }
+                    catch (SqlException ex)
+                    {
+                        //Error Code here
+                        Debug.WriteLine(ex.ToString());
+                        throw new Exception(ex.ToString());
+                    }
+                    finally { con.Close(); }
+
+                    return dbSalt;
                 }
             }
-            catch (SqlException ex)
-            {
-                //Error Code here
-                Console.WriteLine(ex);
-                throw new Exception(ex.ToString());
-            }
-            finally { con.Close(); }
-
-            return dbSalt;
         }
         //This functions checks if user enters the correct current password
         protected bool ValidateEntry()
@@ -525,9 +533,7 @@ namespace Application_Security_Assignment_190246N
             }
             catch (Exception ex)
             {
-                //throw new Exception(ex.ToString());
-                errorMsg.Text = ex.ToString();
-                return false;
+                throw new Exception(ex.ToString());
             }
         }
         protected bool allowPasswordChange()
@@ -630,7 +636,7 @@ namespace Application_Security_Assignment_190246N
 
                         Session.Remove("currentPassword");
 
-                        Response.Redirect("User.aspx",false);
+                        Response.Redirect("User.aspx", false);
                     }
                     else
                     {

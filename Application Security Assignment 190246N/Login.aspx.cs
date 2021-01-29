@@ -237,7 +237,7 @@ namespace Application_Security_Assignment_190246N
 
                     //Checks if password expires or not
                     bool validPassword = validPasswordLifecycle(HttpUtility.HtmlEncode(emailTB.Text.Trim()));
-                    if(validPassword == true)
+                    if (validPassword == true)
                     {
                         Session["currentPassword"] = HttpUtility.HtmlEncode(passwordTB.Text.Trim());
                         Response.Cookies.Add(new HttpCookie("AuthToken", guid));
@@ -339,40 +339,43 @@ namespace Application_Security_Assignment_190246N
         {
             string dbSalt = null;
             //Initialise DB connection
-            SqlConnection con = new SqlConnection(DatabaseConnectionString);
-
-            //Find salt based on email
-            string sqlString = "SELECT passwordSalt FROM userInfo WHERE email=@Email";
-            SqlCommand com = new SqlCommand(sqlString, con);
-            com.Parameters.AddWithValue("@Email", email);
-
-            try
+            using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
             {
-                con.Open();
-                using (SqlDataReader reader = com.ExecuteReader())
+                //Find salt based on email
+                string sqlString = "SELECT passwordSalt FROM userInfo WHERE email=@Email";
+                using (SqlCommand com = new SqlCommand(sqlString, con))
                 {
-                    while (reader.Read())
+                    com.Parameters.AddWithValue("@Email", email);
+                    try
                     {
-                        if (reader["passwordSalt"] != null)
+                        con.Open();
+                        using (SqlDataReader reader = com.ExecuteReader())
                         {
-                            if (reader["passwordSalt"] != DBNull.Value)
+                            while (reader.Read())
                             {
-                                dbSalt = reader["passwordSalt"].ToString();
+                                if (reader["passwordSalt"] != null)
+                                {
+                                    if (reader["passwordSalt"] != DBNull.Value)
+                                    {
+                                        dbSalt = reader["passwordSalt"].ToString();
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-            //Trigger SQL Exception
-            catch (SqlException ex)
-            {
-                //Error Code here
-                Debug.WriteLine(ex.ToString());
-                throw new Exception(ex.ToString());
-            }
-            finally { con.Close(); }
+                    //Trigger SQL Exception
+                    catch (SqlException ex)
+                    {
+                        //Error Code here
+                        Debug.WriteLine(ex.ToString());
+                        throw new Exception(ex.ToString());
+                    }
+                    finally { con.Close(); }
 
-            return dbSalt;
+                    return dbSalt;
+                }
+
+            }
         }
 
         //This functions checks if email exists in the database or not
@@ -408,9 +411,7 @@ namespace Application_Security_Assignment_190246N
             }
             catch (Exception ex)
             {
-                //throw new Exception(ex.ToString());
-                errorMsg.Text = ex.ToString();
-                return false;
+                throw new Exception(ex.ToString());
             }
         }
 
@@ -449,10 +450,12 @@ namespace Application_Security_Assignment_190246N
                                         //Check if passed the condition
                                         if (minuteDifference > 15)
                                         {
+                                            //Set to true because it is older than 15 minutes
                                             isValid = true;
                                         }
                                         else
                                         {
+                                            //Set to false because it is still new
                                             isValid = false;
                                         }
                                     }

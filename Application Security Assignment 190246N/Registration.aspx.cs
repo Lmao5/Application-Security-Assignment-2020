@@ -513,7 +513,7 @@ namespace Application_Security_Assignment_190246N
                         catch (SqlException ex)
                         {
                             //Error Code here
-                            Console.WriteLine(ex);
+                            Debug.WriteLine(ex.ToString());
                             throw new Exception(ex.ToString());
                         }
                         //Close connection
