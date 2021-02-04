@@ -35,7 +35,7 @@ namespace Application_Security_Assignment_190246N
         protected void submitBtn_Click(object sender, EventArgs e)
         {
 
-            int scores = checkPassword(firstPasswordTB.Text);
+            int scores = checkPassword(HttpUtility.HtmlEncode(firstPasswordTB.Text.Trim()));
             switch (scores)
             {
                 case 1:
@@ -84,7 +84,7 @@ namespace Application_Security_Assignment_190246N
                     //submitBtn.Enabled = true;
                     //secondPasswordTB.Text = validCaptcha.ToString();
                     //Retrieve password input
-                    string password = firstPasswordTB.Text.ToString().Trim();
+                    string password = HttpUtility.HtmlEncode(firstPasswordTB.Text.ToString().Trim());
 
                     //Generate random salt
                     RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
@@ -416,6 +416,7 @@ namespace Application_Security_Assignment_190246N
             //Retrieves captcha response from captcha api
             string captchaResponse = Request.Form["g-recaptcha-response"];
 
+            //Make a HTTP request to Recaptcha API
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://www.google.com/recaptcha/api/siteverify?secret=6LekWxYaAAAAAOJF1_WrjjmjffAFI2YN2ZWlmm1i &response=" + captchaResponse);
 
             try
@@ -461,8 +462,10 @@ namespace Application_Security_Assignment_190246N
                 cipherText = encryptTransform.TransformFinalBlock(plainText, 0,
                plainText.Length);
             }
+            //Throw exception here
             catch (Exception ex)
             {
+                //Throw error here
                 throw new Exception(ex.ToString());
             }
             finally { }
@@ -475,21 +478,22 @@ namespace Application_Security_Assignment_190246N
             //Establishing database connection
             using (SqlConnection con = new SqlConnection(DatabaseConnectionString))
             {
+                //SQL Insert Statement
                 using (SqlCommand cmd = new SqlCommand("INSERT INTO userInfo VALUES(@email, @firstName, @lastName, @dob, @nameOnCard, @numberCard, @cvvNumber, @cardExpiry, @passwordHash, @passwordSalt, @lastUpdate, @IV, @Key)"))
                 {
                     using (SqlDataAdapter sda = new SqlDataAdapter())
                     {
                         cmd.CommandType = CommandType.Text;
-                        cmd.Parameters.AddWithValue("@email", emailTB.Text.Trim());
-                        cmd.Parameters.AddWithValue("@firstName", firstNameTB.Text.Trim());
-                        cmd.Parameters.AddWithValue("@lastName", lastNameTB.Text.Trim());
-                        cmd.Parameters.AddWithValue("@dob", Convert.ToDateTime(dobTB.Text));
+                        cmd.Parameters.AddWithValue("@email", HttpUtility.HtmlEncode(emailTB.Text.Trim()));
+                        cmd.Parameters.AddWithValue("@firstName", HttpUtility.HtmlEncode(firstNameTB.Text.Trim()));
+                        cmd.Parameters.AddWithValue("@lastName", HttpUtility.HtmlEncode(lastNameTB.Text.Trim()));
+                        cmd.Parameters.AddWithValue("@dob", Convert.ToDateTime(HttpUtility.HtmlEncode(dobTB.Text)));
 
                         //Card Info
-                        cmd.Parameters.AddWithValue("@nameOnCard", Convert.ToBase64String(encryptData(nameOnCardTB.Text.Trim())));
-                        cmd.Parameters.AddWithValue("@numberCard", Convert.ToBase64String(encryptData(cardNumberTB.Text.Trim())));
-                        cmd.Parameters.AddWithValue("@cvvNumber", Convert.ToBase64String(encryptData(CVVTB.Text.Trim())));
-                        cmd.Parameters.AddWithValue("@cardExpiry", Convert.ToBase64String(encryptData(cardExpiryTB.Text.Trim())));
+                        cmd.Parameters.AddWithValue("@nameOnCard", Convert.ToBase64String(encryptData(HttpUtility.HtmlEncode(nameOnCardTB.Text.Trim()))));
+                        cmd.Parameters.AddWithValue("@numberCard", Convert.ToBase64String(encryptData(HttpUtility.HtmlEncode(cardNumberTB.Text.Trim()))));
+                        cmd.Parameters.AddWithValue("@cvvNumber", Convert.ToBase64String(encryptData(HttpUtility.HtmlEncode(CVVTB.Text.Trim()))));
+                        cmd.Parameters.AddWithValue("@cardExpiry", Convert.ToBase64String(encryptData(HttpUtility.HtmlEncode(cardExpiryTB.Text.Trim()))));
 
                         //Password salt & hash
                         cmd.Parameters.AddWithValue("@passwordHash", finalHash);
@@ -528,6 +532,7 @@ namespace Application_Security_Assignment_190246N
 
         }
 
+        //This functions checks if user has already use their own email already
         protected bool getEmail(string email)
         {
             bool resultEmail = false;
@@ -564,6 +569,7 @@ namespace Application_Security_Assignment_190246N
                     }
                 }
             }
+            //Throw error here
             catch (SqlException ex)
             {
                 //Error Code here

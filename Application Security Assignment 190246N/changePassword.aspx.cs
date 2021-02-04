@@ -52,6 +52,7 @@ namespace Application_Security_Assignment_190246N
                         {
                             //Automatically set value of password
                             currentPasswordTB.Text = currentPassword;
+                            currentPasswordTB.Visible = false;
                             currentPasswordTB.Enabled = false;
                         }
                     }
@@ -612,7 +613,7 @@ namespace Application_Security_Assignment_190246N
                     {
                         string userEmail = Session["emailLogin"].ToString();
 
-                        string newPassword = newPasswordTB.Text.ToString().Trim();
+                        string newPassword = HttpUtility.HtmlEncode(newPasswordTB.Text.ToString().Trim());
 
                         RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
                         byte[] saltByte = new byte[8];
@@ -652,6 +653,7 @@ namespace Application_Security_Assignment_190246N
             else
             {
                 //Error Code here
+                Debug.WriteLine("User is probably a bot");
                 //Response.Redirect("User.aspx", false);
             }
 

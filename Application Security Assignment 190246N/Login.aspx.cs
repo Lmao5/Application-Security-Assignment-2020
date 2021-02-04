@@ -21,8 +21,8 @@ namespace Application_Security_Assignment_190246N
     {
         //store database directory string
         string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
-        static string finalHash;
-        static string salt;
+
+
         byte[] Key;
         byte[] IV;
 
@@ -187,6 +187,7 @@ namespace Application_Security_Assignment_190246N
             //Retrieves captcha response from captcha api
             string captchaResponse = Request.Form["g-recaptcha-response"];
 
+            //Make a HTTP request to Recaptcha API
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://www.google.com/recaptcha/api/siteverify?secret=6LekWxYaAAAAAOJF1_WrjjmjffAFI2YN2ZWlmm1i &response=" + captchaResponse);
 
             try
