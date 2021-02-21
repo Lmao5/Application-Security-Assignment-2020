@@ -6,9 +6,9 @@ Only tutors are allowed to use this project.
 
 ## Tech Used!
 
-* .NET Framework 4.7.2
-* ASP.NET Web Forms
-* Bootstrap 5.0.0 Beta 1
+* [.NET Framework 4.7.2](https://dotnet.microsoft.com/download/dotnet-framework)
+* [ASP.NET Web Forms](https://dotnet.microsoft.com/apps/aspnet/web-forms)
+* [Bootstrap 5.0.0 Beta 1](https://getbootstrap.com/)
 
 ## Key Features
 
@@ -16,6 +16,6 @@ Only tutors are allowed to use this project.
 * Input Validation for client-side and server-side
 * Data Encryption
 * Account Lockout after 3 failed attempts 
-* Google Recaptcha V3
-* Error Handling
-* Change Password Function including password age checks
+* [Google Recaptcha V3](https://developers.google.com/recaptcha/docs/v3)
+* Error Handling (e.g. 404 page)
+* Change Password Function including minimum & maximum password age checks
