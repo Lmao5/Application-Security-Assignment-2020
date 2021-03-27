@@ -11,7 +11,8 @@
             <div class="col-md-8">
                 <form id="registrationForm">
                     <p>
-                        <asp:Label ID="errorMsg" runat="server"></asp:Label></p>
+                        <asp:Label ID="errorMsg" runat="server"></asp:Label>
+                    </p>
                     <div class="mb-3 row">
                         <div class="col-md-6">
                             <label for="firstNameLbl" class="form-label">First Name</label>
@@ -77,7 +78,6 @@
     <script type="text/javascript">
         function validateFirstName() {
             var firstName = document.getElementById('<%=firstNameTB.ClientID%>').value;
-            //console.log(firstName);
 
             if (firstName.length <= 0) {
                 document.getElementById('<%=firstNameError.ClientID%>').innerHTML = "Please enter a valid first name";
@@ -122,8 +122,6 @@
     <script type="text/javascript">
         function ValidateEmail() {
             var email = document.getElementById('<%=emailTB.ClientID%>').value;
-            //console.log("testing");
-            //console.log(email.search(/[@]/));
             if (email.length <= 0) {
                 document.getElementById('<%=emailError.ClientID%>').innerHTML = "Please enter your email address";
                 document.getElementById('<%=emailError.ClientID%>').style.color = "Red";
@@ -162,7 +160,6 @@
     <script type="text/javascript">
         function nameOnCardValidation() {
             var nameOnCard = document.getElementById('<%=nameOnCardTB.ClientID%>').value;
-            console.log(nameOnCard.search(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/));
             if (nameOnCard.length <= 0) {
                 document.getElementById('<%=nameOnCardError.ClientID%>').innerHTML = "Please enter your name on card";
                 document.getElementById('<%=nameOnCardError.ClientID%>').style.color = "Red";
@@ -185,7 +182,6 @@
     <script type="text/javascript">
         function cardNumberValidation() {
             var cardNumber = document.getElementById('<%=cardNumberTB.ClientID%>').value;
-
             if (cardNumber.length <= 0) {
                 document.getElementById('<%=cardNumberError.ClientID%>').innerHTML = "Please enter your card number";
                 document.getElementById('<%=cardNumberError.ClientID%>').style.color = "Red";
@@ -224,7 +220,6 @@
             var cardExpiry = document.getElementById('<%=cardExpiryTB.ClientID%>').value;
             var currentDate = new Date();
             var monthDifference = currentDate.getMonth() - cardExpiry.getMonth();
-
 
             if (cardExpiry.length <= 0) {
                 document.getElementById('<%=cardExpiryError.ClientID%>').innerHTML = "Please choose your card expiry date";
@@ -290,41 +285,41 @@
     <script type="text/javascript">
         function ValidatePassword() {
             var str = document.getElementById('<%=firstPasswordTB.ClientID %>').value;
-               var str2 = document.getElementById('<%=secondPasswordTB.ClientID%>').value;
+            var str2 = document.getElementById('<%=secondPasswordTB.ClientID%>').value;
 
-               if (str.length <= 0) {
-                   document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password length must be at least 8 characters";
-                   document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
-                   document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
-                   return "Too Short"
-               }
-               else if (str.search(/[0-9]/) == -1) {
-                   document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 number";
-                   document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
-                   document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
-                   return "No number"
-               }
-               else if (str.search(/[$&+,:;=?@#|'<>.^*()%!-]/) == -1) {
-                   document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 special character";
-                   document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
-                   document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
-                   return "No special character";
-               }
-               else if (str.search(/[A-Z]/) == -1) {
-                   document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 uppercase letter";
-                   document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
-                   document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
-                   return "No uppercase characters";
-               }
-               else if (str.search(/[a-z]/) == -1) {
-                   document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 lowercase letter";
-                   document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
-                   document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
-                   return "No lowercase characters";
-               }
-               else {
-                   if (str != str2) {
-                       document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Excellent";
+            if (str.length <= 0) {
+                document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password length must be at least 8 characters";
+                document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+                return "Too Short"
+            }
+            else if (str.search(/[0-9]/) == -1) {
+                document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 number";
+                document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+                return "No number"
+            }
+            else if (str.search(/[$&+,:;=?@#|'<>.^*()%!-]/) == -1) {
+                document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 special character";
+                document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+                return "No special character";
+            }
+            else if (str.search(/[A-Z]/) == -1) {
+                document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 uppercase letter";
+                document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+                return "No uppercase characters";
+            }
+            else if (str.search(/[a-z]/) == -1) {
+                document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Password must contain at least 1 lowercase letter";
+                document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Red";
+                document.getElementById('<%=submitBtn.ClientID%>').disabled = true;
+                return "No lowercase characters";
+            }
+            else {
+                if (str != str2) {
+                    document.getElementById('<%=firstPasswordError.ClientID%>').innerHTML = "Excellent";
                        document.getElementById('<%=firstPasswordError.ClientID%>').style.color = "Green";
                        document.getElementById('<%=secondPasswordError.ClientID%>').innerHTML = "Ensure that both passwords are the same";
                        document.getElementById('<%=secondPasswordError.ClientID%>').style.color = "Red";

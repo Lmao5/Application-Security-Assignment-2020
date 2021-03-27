@@ -16,7 +16,7 @@ namespace Application_Security_Assignment_190246N
 
         protected void backBtn_Click(object sender, EventArgs e)
         {
-            Response.Redirect("Home.aspx", false);
+            Response.Redirect("~/Home.aspx", false);
         }
     }
 }

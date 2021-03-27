@@ -21,44 +21,12 @@ namespace Application_Security_Assignment_190246N
     {
         //store database directory string
         string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
-
-
         byte[] Key;
         byte[] IV;
 
         protected void Page_Load(object sender, EventArgs e)
         {
             DateTime currentDate = DateTime.Now;
-            errorMsg.Text = "Testing";
-            errorMsg.ForeColor = Color.Red;
-            //If first time visiting this login page
-            /*if(Session["loginFailureCount"] == null && Session["AuthTokenFailCount"] == null && Request.Cookies["AuthTokenFailCount"] == null)
-            {
-                //Set counter
-                Session["loginFailureCount"] = 0;
-                var loginFailCount = Session["loginFailureCount"];
-                //Below code for testing
-                emailError.Text = loginFailCount.ToString();
-            }
-            else
-            {
-                //Checks if cookie is the same as session
-                if (!Session["AuthTokenFailCount"].ToString().Equals(Request.Cookies["AuthTokenFailCount"].Value))
-                {
-                    Response.Redirect("Login.aspx", false);
-                }
-                else
-                {
-                    if ((int)Session["loginFailureCount"] > 3)
-                    {
-                        submitBtn.Enabled = false;
-                    }
-                    else
-                    {
-                        submitBtn.Enabled = true;
-                    }
-                }
-            }*/
 
             //Checks if Session and cookies exist
             if (Session["loginFailureCount"] != null && Session["AuthTokenFailCount"] != null && Request.Cookies["AuthTokenFailCount"] != null)
@@ -252,7 +220,6 @@ namespace Application_Security_Assignment_190246N
                 }
                 else
                 {
-                    //ValidateInput();
                     string guid = Guid.NewGuid().ToString();
                     Session["AuthTokenFailCount"] = guid;
                     int currentLoginFailCount = (int)Session["loginFailureCount"];
@@ -263,7 +230,6 @@ namespace Application_Security_Assignment_190246N
             }
             else
             {
-                //ValidateInput();
                 string guid = Guid.NewGuid().ToString();
                 Session["AuthTokenFailCount"] = guid;
                 int currentLoginFailCount = (int)Session["loginFailureCount"];
@@ -375,7 +341,6 @@ namespace Application_Security_Assignment_190246N
 
                     return dbSalt;
                 }
-
             }
         }
 

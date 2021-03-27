@@ -23,7 +23,6 @@ namespace Application_Security_Assignment_190246N
         //store database directory string
         string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
 
-
         protected void Page_Load(object sender, EventArgs e)
         {
             //Checks a list of sessions in order to prove that user is registered or not
@@ -191,7 +190,6 @@ namespace Application_Security_Assignment_190246N
                             }
                         }
                     }
-
                 }
             }
             public void updatePassword(string passwordHash, string passwordSalt, string email)
@@ -205,12 +203,9 @@ namespace Application_Security_Assignment_190246N
                         sqlComm.CommandType = CommandType.Text;
 
                         sqlComm.Parameters.AddWithValue("@paraEmail", email);
-
                         sqlComm.Parameters.AddWithValue("@paraPasswordHash", passwordHash);
                         sqlComm.Parameters.AddWithValue("@paraPasswordSalt", passwordSalt);
                         sqlComm.Parameters.AddWithValue("@paraLastUpdate", DateTime.Now);
-
-
                         sqlComm.Connection = sqlConn;
                         try
                         {
@@ -544,15 +539,8 @@ namespace Application_Security_Assignment_190246N
             userInfo uif = new userInfo();
 
             userInfo resultUser = uif.getUserInfo(userEmail);
-            Debug.WriteLine("It works");
-            //errorMsg.Text = resultUser.LastName;
-            Debug.WriteLine(resultUser.LastUpdate);
-            Debug.WriteLine(DateTime.Now);
-
             DateTime currentDate = DateTime.Now;
             double minuteDifference = currentDate.Subtract(resultUser.LastUpdate).TotalMinutes;
-            Debug.WriteLine("===================");
-            Debug.WriteLine(minuteDifference);
 
             if (minuteDifference < 5)
             {
@@ -567,27 +555,6 @@ namespace Application_Security_Assignment_190246N
                 return true;
             }
         }
-        /*protected byte[] encryptData(byte[]iv, byte[] key,string data)
-        {
-            byte[] cipherText = null;
-            try
-            {
-                RijndaelManaged cipher = new RijndaelManaged();
-                cipher.IV = iv;
-                cipher.Key = key;
-                ICryptoTransform encryptTransform = cipher.CreateEncryptor();
-                //ICryptoTransform decryptTransform = cipher.CreateDecryptor();
-                byte[] plainText = Encoding.UTF8.GetBytes(data);
-                cipherText = encryptTransform.TransformFinalBlock(plainText, 0,
-               plainText.Length);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
-            finally { }
-            return cipherText;
-        }*/
 
         protected void submitBtn_Click(object sender, EventArgs e)
         {
@@ -656,7 +623,6 @@ namespace Application_Security_Assignment_190246N
                 Debug.WriteLine("User is probably a bot");
                 //Response.Redirect("User.aspx", false);
             }
-
         }
     }
 }

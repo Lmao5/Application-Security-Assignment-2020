@@ -237,12 +237,6 @@ namespace Application_Security_Assignment_190246N
                 dobTBError.ForeColor = Color.Red;
                 dobTBError.Visible = true;
             }
-            /*else if (!Regex.IsMatch(dobTB.Text, "^[a-zA-Z0-9 ]*$"))
-            {
-                dobTBError.Text = "Please choose a valid birth date";
-                dobTBError.ForeColor = Color.Red;
-                dobTBError.Visible = true;
-            }*/
             else
             {
                 dobTBError.Text = "Excellent";
@@ -457,7 +451,6 @@ namespace Application_Security_Assignment_190246N
                 cipher.IV = IV;
                 cipher.Key = Key;
                 ICryptoTransform encryptTransform = cipher.CreateEncryptor();
-                //ICryptoTransform decryptTransform = cipher.CreateDecryptor();
                 byte[] plainText = Encoding.UTF8.GetBytes(data);
                 cipherText = encryptTransform.TransformFinalBlock(plainText, 0,
                plainText.Length);
@@ -527,9 +520,7 @@ namespace Application_Security_Assignment_190246N
                         }
                     }
                 }
-
             }
-
         }
 
         //This functions checks if user has already use their own email already
@@ -542,7 +533,6 @@ namespace Application_Security_Assignment_190246N
             string sqlString = "SELECT email FROM userInfo WHERE email=@Email";
             SqlCommand com = new SqlCommand(sqlString, con);
             com.Parameters.AddWithValue("@Email", email);
-
             try
             {
                 con.Open();
@@ -554,7 +544,6 @@ namespace Application_Security_Assignment_190246N
                         {
                             if (reader["email"] != DBNull.Value)
                             {
-                                //resultEmail = reader["email"].ToString();
                                 resultEmail = true;
                             }
                             else

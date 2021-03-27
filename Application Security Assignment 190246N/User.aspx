@@ -14,8 +14,6 @@
                     <p>What would you like to do?</p>
                     <asp:Button ID="changePassBtn" runat="server" Text="Change Password" CssClass="btn btn-primary btn-style" OnClick="changePassBtn_Click" />
                     <asp:Button ID="logoutBtn" runat="server" Text="Logout" CssClass="btn btn-primary btn-style" OnClick="logoutBtn_Click" />
-                    <!--- Here are your following information --->
-                    <!--- something something personal information --->
                 </div>
                 <div class="col-md-4">
                 </div>

@@ -15,8 +15,6 @@ namespace Application_Security_Assignment_190246N
     {
         //store database directory string
         string DatabaseConnectionString = ConfigurationManager.ConnectionStrings["DBConnectionString"].ConnectionString;
-        static string finalHash;
-        static string salt;
         byte[] Key;
         byte[] IV;
 
@@ -24,8 +22,6 @@ namespace Application_Security_Assignment_190246N
         {
             public string firstName { get; set; }
             public string lastName { get; set; }
-            //public string firstName { get; set; }
-
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -40,7 +36,6 @@ namespace Application_Security_Assignment_190246N
                 else
                 {
                     bool validUser = validateUser(Session["emailLogin"].ToString());
-
                     String fullName = retrieveInfo(Session["emailLogin"].ToString());
                     if (validUser == true)
                     {
@@ -56,16 +51,6 @@ namespace Application_Security_Assignment_190246N
             {
                 Response.Redirect("Login.aspx", false);
             }
-            /*bool validUser = true;//validateUser();
-            if (validUser == true)
-            {
-                //Sample name
-                userName.Text = "Johnny Lim";
-            }
-            else
-            {
-                Response.Redirect("Login.aspx", false);
-            }*/
         }
         protected string decryptData(byte[] cipherText)
         {
